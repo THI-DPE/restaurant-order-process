@@ -10,10 +10,10 @@ import java.util.List;
 @Table(name = "orders")
 public class Ordering extends PanacheEntity {
 
-    @Column(name = "customer_id", nullable = false)
+    @Column(nullable = false)
     private Long customerId;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "order_meals",
             joinColumns = @JoinColumn(name = "order_id"),
@@ -21,7 +21,7 @@ public class Ordering extends PanacheEntity {
     )
     private List<Meal> meals;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "order_drinks",
             joinColumns = @JoinColumn(name = "order_id"),
@@ -29,14 +29,14 @@ public class Ordering extends PanacheEntity {
     )
     private List<Drink> drinks;
 
-    @Column(name = "timestamp", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    @Column(name = "processor_id", nullable = false)
+    @Column(nullable = false)
     private Long processorId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private StatusEnum status;
 
     public enum StatusEnum {
