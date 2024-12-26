@@ -9,6 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 public class Ordering extends PanacheEntity {
+    //Panache is a base class provided by Quarkus to simplify JPA entity handling; includes id of type long and basic persistence methods
 
     @Column(nullable = false)
     private Long customerId;
