@@ -1,9 +1,9 @@
 {
     "description": "",
-    "display_name": "SCIL-Prozess",
+    "display_name": "Fehlerprozess",
     "exception_notification_addresses": [],
     "fault_or_suspend_on_exception": "fault",
     "metadata_extraction_paths": null,
-    "primary_file_name": "scil-prozess.bpmn",
-    "primary_process_id": "Process_scil_prozess_mhpueep"
+    "primary_file_name": "fehlerprozess.bpmn",
+    "primary_process_id": "Process_fehlerprozess_es84cdw"
 }
