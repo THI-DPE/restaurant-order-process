@@ -49,4 +49,42 @@ public class OrderingResource {
         // entity(ordering) --> adds newly created ordering object as response payload
         // build(): constructs response object
     }
+
+    // PUT endpoint to update an order
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response updateOrder(@PathParam("id") Long id, Ordering ordering){
+        Ordering existingOrdering = orderingRepository.findById(id);
+        if (existingOrdering == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
+        }
+
+        existingOrdering.setCustomerId(ordering.getCustomerId());
+        existingOrdering.setDrinks(ordering.getDrinks());
+        existingOrdering.setMeals(ordering.getMeals());
+        existingOrdering.setStatus(ordering.getStatus());
+        existingOrdering.setTimestamp(ordering.getTimestamp());
+        existingOrdering.setProcessorId(ordering.getProcessorId());
+
+        orderingRepository.persist(existingOrdering);
+
+        return Response.ok(existingOrdering).build();
+    }
+
+
+    // DELETE endpoint to delete an order
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public Response deleteOrder(@PathParam("id") Long id){
+        Ordering ordering = orderingRepository.findById(id);
+        if (ordering == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
+        }
+        orderingRepository.delete(ordering);
+        return Response.noContent().build(); // 204 No Content
+    }
+
 }
