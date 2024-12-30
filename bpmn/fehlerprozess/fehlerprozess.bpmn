@@ -2,7 +2,7 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_15lo1mn">
     <bpmn:participant id="Participant_0awg82f" processRef="Process_fehlerprozess_es84cdw" />
-    <bpmn:correlationKey id="CorrelationKey_1xrumqx" name="MainCorrelationKey" />
+    <bpmn:correlationKey id="CorrelationKey_0erg94s" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_fehlerprozess_es84cdw" isExecutable="true">
     <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_0qpzdpu" />
@@ -12,7 +12,7 @@
     </bpmn:endEvent>
     <bpmn:startEvent id="StartEvent_1" name="Fehlernachricht empfangen">
       <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1j1cpi9" messageRef="Fehlernachricht">
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1j1cpi9" messageRef="error_message">
         <bpmn:extensionElements />
       </bpmn:messageEventDefinition>
     </bpmn:startEvent>
@@ -35,7 +35,7 @@ You can also change the text you are reading here by updating the *Instructions*
       <bpmn:outgoing>Flow_0xemb0s</bpmn:outgoing>
     </bpmn:serviceTask>
   </bpmn:process>
-  <bpmn:message id="Fehlernachricht" name="Fehlernachricht" />
+  <bpmn:message id="error_message" name="error_message" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_15lo1mn">
       <bpmndi:BPMNShape id="Participant_0awg82f_di" bpmnElement="Participant_0awg82f" isHorizontal="true">

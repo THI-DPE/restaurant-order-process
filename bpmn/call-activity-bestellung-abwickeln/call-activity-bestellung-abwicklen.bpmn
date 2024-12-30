@@ -134,16 +134,10 @@ drinks_order_queue.append(new_entry_drink)
       <bpmn:incoming>Flow_1qstzuc</bpmn:incoming>
       <bpmn:outgoing>Flow_05vvm81</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_0xccv8a" sourceRef="Activity_0z1ekr2" targetRef="Gateway_14k47kj" />
     <bpmn:sequenceFlow id="Flow_1bb1pif" sourceRef="Gateway_14k47kj" targetRef="Activity_1nd9mfo" />
     <bpmn:sequenceFlow id="Flow_1ad6vd6" sourceRef="Gateway_04jug5t" targetRef="Gateway_14k47kj">
       <bpmn:conditionExpression>productCategory["productCategoryName"] != "drinks"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:scriptTask id="Activity_0z1ekr2" name="Test">
-      <bpmn:incoming>Flow_05vvm81</bpmn:incoming>
-      <bpmn:outgoing>Flow_0xccv8a</bpmn:outgoing>
-      <bpmn:script>successfullyProcessedItems = productCategory</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:receiveTask id="Activity_1dno9cd" name="Auf Fertigstellung warten">
       <bpmn:incoming>Flow_0n755gx</bpmn:incoming>
       <bpmn:outgoing>Flow_0g2fpss</bpmn:outgoing>
@@ -167,12 +161,6 @@ drinks_order_queue.append(new_entry_drink)
       <bpmn:outgoing>Flow_0cf7r5w</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1lvbh17" />
     </bpmn:boundaryEvent>
-    <bpmn:exclusiveGateway id="Gateway_14k47kj">
-      <bpmn:incoming>Flow_0xccv8a</bpmn:incoming>
-      <bpmn:incoming>Flow_1ad6vd6</bpmn:incoming>
-      <bpmn:incoming>Flow_0zybhpv</bpmn:incoming>
-      <bpmn:outgoing>Flow_1bb1pif</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:sendTask id="Activity_07bh670" name="Kunde über Bearbeitung informieren">
       <bpmn:incoming>Flow_0ls9w4o</bpmn:incoming>
       <bpmn:outgoing>Flow_0n755gx</bpmn:outgoing>
@@ -262,6 +250,20 @@ if productCategory["productCategoryName"] == "food":
     <bpmn:endEvent id="Event_1hx5hsx">
       <bpmn:incoming>Flow_1htxurj</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_14k47kj">
+      <bpmn:incoming>Flow_1ad6vd6</bpmn:incoming>
+      <bpmn:incoming>Flow_0zybhpv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bb1pif</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_17dawar" sourceRef="Activity_0z1ekr2" targetRef="Event_02y15e9" />
+    <bpmn:scriptTask id="Activity_0z1ekr2" name="Test">
+      <bpmn:incoming>Flow_05vvm81</bpmn:incoming>
+      <bpmn:outgoing>Flow_17dawar</bpmn:outgoing>
+      <bpmn:script>successfullyProcessedItems = productCategory</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="Event_02y15e9">
+      <bpmn:incoming>Flow_17dawar</bpmn:incoming>
+    </bpmn:endEvent>
   </bpmn:process>
   <bpmn:dataStore id="drinks_order_queue" name="JSONDataStore" />
   <bpmn:dataStore id="food_order_queue" name="JSONDataStore" />
@@ -309,10 +311,6 @@ if productCategory["productCategoryName"] == "food":
       <bpmndi:BPMNShape id="Gateway_1ag81jh_di" bpmnElement="Gateway_1ag81jh" isMarkerVisible="true">
         <dc:Bounds x="408" y="165" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0z8ahqk_di" bpmnElement="Activity_0z1ekr2">
-        <dc:Bounds x="470" y="240" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0nxsady_di" bpmnElement="Activity_1dno9cd">
         <dc:Bounds x="1800" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -338,9 +336,6 @@ if productCategory["productCategoryName"] == "food":
       <bpmndi:BPMNShape id="Activity_1ovr4pe_di" bpmnElement="Activity_1ovr4pe">
         <dc:Bounds x="2310" y="-90" width="100" height="80" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_14k47kj_di" bpmnElement="Gateway_14k47kj" isMarkerVisible="true">
-        <dc:Bounds x="585" y="165" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1k29xxb_di" bpmnElement="Activity_07bh670">
         <dc:Bounds x="1680" y="100" width="100" height="80" />
@@ -376,6 +371,19 @@ if productCategory["productCategoryName"] == "food":
       <bpmndi:BPMNShape id="Activity_06n467u_di" bpmnElement="Activity_1nd9mfo">
         <dc:Bounds x="700" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hx5hsx_di" bpmnElement="Event_1hx5hsx">
+        <dc:Bounds x="1482" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_14k47kj_di" bpmnElement="Gateway_14k47kj" isMarkerVisible="true">
+        <dc:Bounds x="735" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0z8ahqk_di" bpmnElement="Activity_0z1ekr2">
+        <dc:Bounds x="510" y="150" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02y15e9_di" bpmnElement="Event_02y15e9">
+        <dc:Bounds x="652" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataInput-388263309-1DI1" bpmnElement="productCategory">
         <dc:Bounds x="112" y="-95" width="36" height="50" />
         <bpmndi:BPMNLabel>
@@ -387,9 +395,6 @@ if productCategory["productCategoryName"] == "food":
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2221" y="-28" width="83" height="27" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1hx5hsx_di" bpmnElement="Event_1hx5hsx">
-        <dc:Bounds x="1482" y="172" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0hgsu3l_di" bpmnElement="Event_1m4qqn3">
         <dc:Bounds x="1882" y="162" width="36" height="36" />
@@ -443,27 +448,23 @@ if productCategory["productCategoryName"] == "food":
         <di:waypoint x="433" y="215" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05vvm81_di" bpmnElement="Flow_05vvm81">
-        <di:waypoint x="433" y="215" />
-        <di:waypoint x="433" y="280" />
-        <di:waypoint x="470" y="280" />
+        <di:waypoint x="458" y="190" />
+        <di:waypoint x="510" y="190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1yrj6gq_di" bpmnElement="Flow_1yrj6gq">
         <di:waypoint x="108" y="140" />
         <di:waypoint x="205" y="140" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0xccv8a_di" bpmnElement="Flow_0xccv8a">
-        <di:waypoint x="570" y="280" />
-        <di:waypoint x="610" y="280" />
-        <di:waypoint x="610" y="215" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bb1pif_di" bpmnElement="Flow_1bb1pif">
-        <di:waypoint x="610" y="165" />
-        <di:waypoint x="610" y="140" />
-        <di:waypoint x="700" y="140" />
+        <di:waypoint x="760" y="215" />
+        <di:waypoint x="760" y="198" />
+        <di:waypoint x="750" y="198" />
+        <di:waypoint x="750" y="180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ad6vd6_di" bpmnElement="Flow_1ad6vd6">
-        <di:waypoint x="945" y="190" />
-        <di:waypoint x="635" y="190" />
+        <di:waypoint x="970" y="215" />
+        <di:waypoint x="970" y="240" />
+        <di:waypoint x="785" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0tmj1rv_di" bpmnElement="Flow_0tmj1rv">
         <di:waypoint x="800" y="140" />
@@ -480,13 +481,16 @@ if productCategory["productCategoryName"] == "food":
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0zybhpv_di" bpmnElement="Flow_0zybhpv">
         <di:waypoint x="1400" y="215" />
-        <di:waypoint x="1400" y="280" />
-        <di:waypoint x="610" y="280" />
-        <di:waypoint x="610" y="215" />
+        <di:waypoint x="1400" y="240" />
+        <di:waypoint x="785" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14hjy7m_di" bpmnElement="Flow_14hjy7m">
         <di:waypoint x="995" y="190" />
         <di:waypoint x="1240" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17dawar_di" bpmnElement="Flow_17dawar">
+        <di:waypoint x="610" y="190" />
+        <di:waypoint x="652" y="190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_0p6fut6_di" bpmnElement="Participant_027omqn" isHorizontal="true">
         <dc:Bounds x="1070" y="570" width="600" height="60" />
