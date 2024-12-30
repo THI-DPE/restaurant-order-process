@@ -1,0 +1,25 @@
+{
+    "correlation_keys": null,
+    "correlation_properties": null,
+    "data_store_specifications": {},
+    "description": "",
+    "display_name": "Digital Process Engine",
+    "messages": {
+        "pdaOrderMessage": {
+            "correlation_properties": {
+                "product": {
+                    "retrieval_expression": "product"
+                }
+            },
+            "schema": {}
+        },
+        "pdaOrderMsg": {
+            "correlation_properties": {
+                "product": {
+                    "retrieval_expression": "product"
+                }
+            },
+            "schema": {}
+        }
+    }
+}
