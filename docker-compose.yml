@@ -28,6 +28,20 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+
+  activemq:
+    image: apache/activemq-artemis
+    container_name: activemq
+    environment:
+      #ARTEMIS_USERNAME: admin
+      #ARTEMIS_PASSWORD: admin
+      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0" #Fix for ARM64 Bug
+    ports:
+      - "61616:61616" # ActiveMQ Core protocol
+      - "8161:8161"   # Web Console
+    volumes:
+      - activemq_data:/var/lib/artemis-instance
+    restart: unless-stopped
   
 
   # spiff
@@ -101,3 +115,4 @@ volumes:
   postgres_data:
   spiffworkflow_backend_db:
     driver: local
+  activemq_data:
