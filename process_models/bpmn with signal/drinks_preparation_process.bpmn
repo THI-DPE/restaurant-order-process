@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:collaboration id="Collaboration_05kckp4">
+    <bpmn:participant id="Participant_0kj7b6k" name="drinks_preparation_process" processRef="Process_ausschankprozess_vanj4b22" />
+    <bpmn:participant id="Participant_0w9cudd" name="payedOrder_process" />
+    <bpmn:messageFlow id="Flow_1vhf3fx" name="end of the drinks order preparation" sourceRef="Activity_0jqlss9" targetRef="Participant_0w9cudd" />
+    <bpmn:messageFlow id="Flow_1pjwqv3" name="start of the drinks order preparation" sourceRef="Activity_1blc31q" targetRef="Participant_0w9cudd" />
+    <bpmn:correlationKey id="CorrelationKey_0qja4j1" name="MainCorrelationKey">
+      <bpmn:correlationPropertyRef>orderId</bpmn:correlationPropertyRef>
+    </bpmn:correlationKey>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_ausschankprozess_vanj4b22" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_1bv0dl7">
+      <bpmn:lane id="Lane_1v6xmzi">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_179k8lg</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0jqlss9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1l49pw0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_031sp1j</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1blc31q</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1ybe6ub</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_13bmr24</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1" name="Bar employee selects next order">
+      <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_031sp1j" />
+    <bpmn:sequenceFlow id="Flow_05wkx76" sourceRef="Activity_031sp1j" targetRef="Activity_1l49pw0" />
+    <bpmn:sequenceFlow id="Flow_0mtw435" sourceRef="Activity_179k8lg" targetRef="Activity_0jqlss9" />
+    <bpmn:sequenceFlow id="Flow_0ne3cgn" sourceRef="Event_1ybe6ub" targetRef="Activity_179k8lg" />
+    <bpmn:sequenceFlow id="Flow_094ary5" sourceRef="Activity_1l49pw0" targetRef="Activity_1blc31q" />
+    <bpmn:callActivity id="Activity_179k8lg" name="Prepare drink" calledElement="Process_call_activity_drinks_process_355ua1x">
+      <bpmn:extensionElements>
+        <spiffworkflow:postScript>var_successfully_prepared_drinks_length = len(successfully_prepared_drinks)
+
+# Check for failed drinks
+failed_drinks = [drink for drink in drinks if drink not in successfully_prepared_drinks]
+
+if var_successfully_prepared_drinks_length == var_drinks_order_length:
+    message_type = "preparation successful"
+elif var_successfully_prepared_drinks_length &gt; 0:
+    message_type = "preparation partially successful"
+else:
+    message_type = "preparation failed"
+</spiffworkflow:postScript>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ne3cgn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mtw435</bpmn:outgoing>
+      <bpmn:property id="Property_10xxf2y" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0i21w6m">
+        <bpmn:sourceRef>DataObjectReference_1vsykht</bpmn:sourceRef>
+        <bpmn:targetRef>Property_10xxf2y</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1i4icmd">
+        <bpmn:targetRef>DataObjectReference_03dn7z1</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:loopDataInputRef>drinks</bpmn:loopDataInputRef>
+        <bpmn:loopDataOutputRef>successfully_prepared_drinks</bpmn:loopDataOutputRef>
+        <bpmn:inputDataItem id="drink" name="drink" />
+        <bpmn:outputDataItem id="successfully_prepared_drink" name="successfully_prepared_drink" />
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:callActivity>
+    <bpmn:sendTask id="Activity_0jqlss9" name="inform about the end of the drinks order preparation" messageRef="drinks_preparation_result">
+      <bpmn:extensionElements>
+        <spiffworkflow:messagePayload>{
+"orderId": next_order["orderId"],
+"productCategoryName": "drinks",
+"message_type": message_type,
+"successfully_prepared_orders": successfully_prepared_drinks,
+"failed_orders": failed_drinks
+}</spiffworkflow:messagePayload>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mtw435</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cc5xi6</bpmn:outgoing>
+      <bpmn:property id="Property_1myax7g" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_16fq5br">
+        <bpmn:sourceRef>DataObjectReference_03dn7z1</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1myax7g</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_187abug" sourceRef="Activity_1blc31q" targetRef="Event_1ybe6ub" />
+    <bpmn:serviceTask id="Activity_1l49pw0" name="Add processorId in drinks order">
+      <bpmn:incoming>Flow_05wkx76</bpmn:incoming>
+      <bpmn:outgoing>Flow_094ary5</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1sbnov7">
+        <bpmn:targetRef>DataObjectReference_1vsykht</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Activity_031sp1j" name="Get orderId from queue position one">
+      <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
+      <bpmn:outgoing>Flow_05wkx76</bpmn:outgoing>
+      <bpmn:property id="Property_0x8jbmr" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_00yl1w8">
+        <bpmn:sourceRef>DataStoreReference_1lgvea2</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0x8jbmr</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_179y1o6">
+        <bpmn:targetRef>DataStoreReference_1lgvea2</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:script># next_order = None
+# for order in drinks_order_queue:
+#     if order["drinks_order_queue_position"] == 1:
+#         next_order = order
+#         del drinks_order_queue[drinks_order_queue.index(order)]
+#         break
+
+next_order = None
+for index, order in enumerate(drinks_order_queue):
+    if order["drinks_order_queue_position"] == 1:
+        next_order = order
+        del drinks_order_queue[index]  # Remove the order at the current index
+        break
+
+
+
+
+
+
+
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:dataStoreReference id="DataStoreReference_1lgvea2" name="drinks_order_queue" dataStoreRef="drinks_order_queue" type="json" />
+    <bpmn:dataObjectReference id="DataObjectReference_1vsykht" name="drinks" dataObjectRef="drinks" />
+    <bpmn:dataObject id="drinks" name="drinks" isCollection="true" />
+    <bpmn:sendTask id="Activity_1blc31q" name="inform about the start of the drinks order preparation">
+      <bpmn:incoming>Flow_094ary5</bpmn:incoming>
+      <bpmn:outgoing>Flow_187abug</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateThrowEvent id="Event_1ybe6ub" name="Drinks preparation started">
+      <bpmn:incoming>Flow_187abug</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ne3cgn</bpmn:outgoing>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_132afvf" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="Event_13bmr24">
+      <bpmn:incoming>Flow_0cc5xi6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0cc5xi6" sourceRef="Activity_0jqlss9" targetRef="Event_13bmr24" />
+    <bpmn:dataObjectReference id="DataObjectReference_03dn7z1" name="successfully_prepared_drinks" dataObjectRef="successfully_prepared_drinks" />
+    <bpmn:dataObject id="successfully_prepared_drinks" name="successfully_prepared_drinks" isCollection="true" />
+  </bpmn:process>
+  <bpmn:dataStore id="drinks_order_queue" name="JSONDataStore" />
+  <bpmn:message id="drinks_preparation_started" name="drinks_preparation_started" />
+  <bpmn:message id="drinks_preparation_result" name="drinks_preparation_result" />
+  <bpmn:message id="preparation_result" name="preparation_result" />
+  <bpmn:correlationProperty id="orderId" name="orderId">
+    <bpmn:correlationPropertyRetrievalExpression messageRef="preparation_result">
+      <bpmn:formalExpression>orderId</bpmn:formalExpression>
+    </bpmn:correlationPropertyRetrievalExpression>
+    <bpmn:correlationPropertyRetrievalExpression messageRef="drinks_preparation_result">
+      <bpmn:formalExpression>orderId</bpmn:formalExpression>
+    </bpmn:correlationPropertyRetrievalExpression>
+    <bpmn:correlationPropertyRetrievalExpression messageRef="drinks_preparation_started">
+      <bpmn:formalExpression>orderId</bpmn:formalExpression>
+    </bpmn:correlationPropertyRetrievalExpression>
+  </bpmn:correlationProperty>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_05kckp4">
+      <bpmndi:BPMNShape id="Participant_0kj7b6k_di" bpmnElement="Participant_0kj7b6k" isHorizontal="true">
+        <dc:Bounds x="-140" y="-60" width="1260" height="600" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1v6xmzi_di" bpmnElement="Lane_1v6xmzi" isHorizontal="true">
+        <dc:Bounds x="-110" y="-60" width="1230" height="600" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="-58" y="202" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-83" y="245" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15yquuy_di" bpmnElement="Activity_179k8lg">
+        <dc:Bounds x="710" y="180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ezomlv_di" bpmnElement="Activity_0jqlss9">
+        <dc:Bounds x="860" y="180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ihhxcm_di" bpmnElement="Activity_1l49pw0">
+        <dc:Bounds x="200" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kmibi5_di" bpmnElement="Activity_031sp1j">
+        <dc:Bounds x="40" y="180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_1lgvea2_di" bpmnElement="DataStoreReference_1lgvea2">
+        <dc:Bounds x="65" y="55" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="47" y="18" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1vsykht_di" bpmnElement="DataObjectReference_1vsykht">
+        <dc:Bounds x="232" y="305" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="236" y="362" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0agr79y_di" bpmnElement="Activity_1blc31q">
+        <dc:Bounds x="360" y="180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0195qdo_di" bpmnElement="Event_1ybe6ub">
+        <dc:Bounds x="562" y="202" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="535" y="245" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13bmr24_di" bpmnElement="Event_13bmr24">
+        <dc:Bounds x="1022" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_03dn7z1_di" bpmnElement="DataObjectReference_03dn7z1">
+        <dc:Bounds x="782" y="295" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="761" y="352" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
+        <di:waypoint x="-22" y="220" />
+        <di:waypoint x="40" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05wkx76_di" bpmnElement="Flow_05wkx76">
+        <di:waypoint x="140" y="220" />
+        <di:waypoint x="200" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mtw435_di" bpmnElement="Flow_0mtw435">
+        <di:waypoint x="810" y="220" />
+        <di:waypoint x="860" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ne3cgn_di" bpmnElement="Flow_0ne3cgn">
+        <di:waypoint x="598" y="220" />
+        <di:waypoint x="710" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_094ary5_di" bpmnElement="Flow_094ary5">
+        <di:waypoint x="300" y="220" />
+        <di:waypoint x="360" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_187abug_di" bpmnElement="Flow_187abug">
+        <di:waypoint x="460" y="220" />
+        <di:waypoint x="562" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cc5xi6_di" bpmnElement="Flow_0cc5xi6">
+        <di:waypoint x="960" y="220" />
+        <di:waypoint x="1022" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0fo2p2h_di" bpmnElement="Participant_0w9cudd" isHorizontal="true">
+        <dc:Bounds x="270" y="-170" width="850" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0i21w6m_di" bpmnElement="DataInputAssociation_0i21w6m">
+        <di:waypoint x="268" y="327" />
+        <di:waypoint x="710" y="243" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1i4icmd_di" bpmnElement="DataOutputAssociation_1i4icmd">
+        <di:waypoint x="778" y="260" />
+        <di:waypoint x="793" y="295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_16fq5br_di" bpmnElement="DataInputAssociation_16fq5br">
+        <di:waypoint x="818" y="305" />
+        <di:waypoint x="868" y="259" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1sbnov7_di" bpmnElement="DataOutputAssociation_1sbnov7">
+        <di:waypoint x="251" y="260" />
+        <di:waypoint x="252" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_00yl1w8_di" bpmnElement="DataInputAssociation_00yl1w8">
+        <di:waypoint x="80" y="105" />
+        <di:waypoint x="80" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_179y1o6_di" bpmnElement="DataOutputAssociation_179y1o6">
+        <di:waypoint x="90" y="180" />
+        <di:waypoint x="90" y="105" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vhf3fx_di" bpmnElement="Flow_1vhf3fx">
+        <di:waypoint x="910" y="180" />
+        <di:waypoint x="910" y="-110" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="917" y="32" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pjwqv3_di" bpmnElement="Flow_1pjwqv3">
+        <di:waypoint x="410" y="180" />
+        <di:waypoint x="410" y="-110" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="417" y="32" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
