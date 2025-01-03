@@ -1,9 +1,17 @@
 package de.thi.orderservice;
 
+import de.thi.orderservice.jpa.Drink;
+import de.thi.orderservice.jpa.Meal;
+import de.thi.orderservice.jpa.Ordering;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 
@@ -79,4 +87,48 @@ class OrderingResourceTest {
                 .body("customerId", is(1)) // Check that the customer ID is correct
                 .body("status", is("PROCESSING")); // Validate the status
     }
+
+    @Test
+    void testUpdateOrder(){
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setDrinks(List.of(new Drink(), new Drink()));
+        ordering.setMeals(List.of(new Meal(), new Meal()));
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2025-01-03T12:00:00"));
+        ordering.setProcessorId(1L);
+
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(ordering)
+                .when()
+                .post("/orders")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        Ordering updatedOrdering = new Ordering();
+        updatedOrdering.setCustomerId(2L);
+        updatedOrdering.setDrinks(List.of(new Drink()));
+        updatedOrdering.setMeals(List.of(new Meal()));
+        updatedOrdering.setStatus(Ordering.StatusEnum.COMPLETED);
+        updatedOrdering.setTimestamp(LocalDateTime.parse("2025-01-03T13:00:00"));
+        updatedOrdering.setProcessorId(2L);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(updatedOrdering)
+                .when()
+                .put("/orders/" + id)
+                .then()
+                .statusCode(200)
+                .body("customerId", is(2))
+                .body("drinks", hasSize(1))
+                .body("meals", hasSize(1))
+                .body("status", is("COMPLETED"))
+                .body("timestamp", is("2025-01-03T13:00:00"))
+                .body("processorId", is(2));
+
+    }
+
 }
