@@ -98,6 +98,7 @@ class OrderingResourceTest {
         ordering.setTimestamp(LocalDateTime.parse("2025-01-03T12:00:00"));
         ordering.setProcessorId(1L);
 
+        // Bestellung anlegen
         int id = given()
                 .contentType(ContentType.JSON)
                 .body(ordering)
@@ -115,6 +116,7 @@ class OrderingResourceTest {
         updatedOrdering.setTimestamp(LocalDateTime.parse("2025-01-03T13:00:00"));
         updatedOrdering.setProcessorId(2L);
 
+        // Bestellung aktualisieren
         given()
                 .contentType(ContentType.JSON)
                 .body(updatedOrdering)
@@ -131,4 +133,38 @@ class OrderingResourceTest {
 
     }
 
+    @Test
+    void testDeleteOrder() {
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setDrinks(List.of(new Drink()));
+        ordering.setMeals(List.of(new Meal()));
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2025-01-03T12:00:00"));
+        ordering.setProcessorId(1L);
+
+        // Bestellung anlegen
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(ordering)
+                .when()
+                .post("/orders")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        // Bestellung löschen
+        given()
+                .when()
+                .delete("/orders/" + id)
+                .then()
+                .statusCode(204);
+
+        // Überprüfen, ob Bestellung gelöscht wurde
+        given()
+                .when()
+                .get("/orders/" + id)
+                .then()
+                .statusCode(404);
+    }
 }
