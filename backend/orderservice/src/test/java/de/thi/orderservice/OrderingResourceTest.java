@@ -29,7 +29,7 @@ class OrderingResourceTest {
 
     // Test for GET method to fetch all orders (Author: Ralf)
     @Test // JUnit annotation
-    public void testGetOrders() {
+    void testGetOrders() {
         // usage of REST assured Java library for testing REST APIs
         given() // sets up request (query parameters, headers or body can be added)
                 .when().get("/orders") // when() signals start of the actual request
@@ -41,12 +41,20 @@ class OrderingResourceTest {
 
     // Test for POST method to create a new order (Author: Ralf)
     @Test
-    public void testCreateOrder() {
-        String orderJson = "{ \"customerId\": 1, \"meals\": [1], \"drinks\": [1], \"timestamp\": \"2024-12-26T12:00:00\", \"processorId\": 1, \"status\": \"PROCESSING\" }";
+    void testCreateOrder() {
+        // Create an order for testing
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2024-12-26T12:00:00"));
+        ordering.setProcessorId(1L);
+        ordering.setMeals(List.of(new Meal()));
+        ordering.setDrinks(List.of(new Drink()));
+
 
         given()
                 .contentType(ContentType.JSON)
-                .body(orderJson)
+                .body(ordering)
                 .when().post("/orders")
                 .then()
                 .statusCode(201)
@@ -58,14 +66,20 @@ class OrderingResourceTest {
     // Test for GET orderById (Author: Ralf)
     @Test
     @Transactional // Ensures that data setup and cleanup occur within a transaction
-    public void testGetOrderById() {
+    void testGetOrderById() {
         // Create an order for testing
-        String orderJson = "{ \"customerId\": 1, \"meals\": [1], \"drinks\": [1], \"timestamp\": \"2024-12-26T12:00:00\", \"processorId\": 1, \"status\": \"PROCESSING\" }";
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2024-12-26T12:00:00"));
+        ordering.setProcessorId(1L);
+        ordering.setMeals(List.of(new Meal()));
+        ordering.setDrinks(List.of(new Drink()));
 
         // POST request to create the order and extract the generated order ID
         Long orderId = given()
                 .contentType(ContentType.JSON)
-                .body(orderJson)
+                .body(ordering)
                 .when()
                 .post("/orders")
                 .then()
@@ -81,9 +95,7 @@ class OrderingResourceTest {
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .body("id", is(orderId.intValue())) // Check that the ID matches
-                // intValue --> convert Long value of orderId to int (orderId from Ordering entity is inherited from PanacheEntity and the id field there is a long while response will be int
-                // is() --> static method from Hamcrest library that creates a matcher to compare the actual value in the response with the expected value
+                .body("id", is(orderId))
                 .body("customerId", is(1)) // Check that the customer ID is correct
                 .body("status", is("PROCESSING")); // Validate the status
     }
