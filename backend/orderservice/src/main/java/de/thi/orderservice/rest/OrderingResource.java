@@ -1,5 +1,6 @@
 package de.thi.orderservice.rest;
 
+import de.thi.orderservice.jpa.Drink;
 import de.thi.orderservice.jpa.Meal;
 import de.thi.orderservice.jpa.Ordering;
 import de.thi.orderservice.jpa.OrderingRepository;
@@ -112,8 +113,31 @@ public class OrderingResource {
         ordering.setMeals(meals);
         orderingRepository.persist(ordering);
 
-        // Initialization of the drinks collection to avoid LazyInitializationException during serialization.
-        Hibernate.initialize(ordering.getDrinks());
+        return Response.ok(price).build();
+    }
+
+    @PUT
+    @Path("/{id}/drinks/{drinkId}")
+    @Transactional
+    public Response removeDrink(@PathParam("id") long id, @PathParam("drinkId") long drinkId) {
+        Ordering ordering = orderingRepository.findById(id);
+        if (ordering == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
+        }
+
+        double price = 0.0;
+
+        List<Drink> drinks = ordering.getDrinks();
+        for (Drink drink : drinks){
+            if (drink.getId() == drinkId){
+                price = drink.getPrice();
+                drinks.remove(drink);
+                break;
+            }
+        }
+
+        ordering.setDrinks(drinks);
+        orderingRepository.persist(ordering);
 
         return Response.ok(price).build();
     }
