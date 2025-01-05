@@ -98,9 +98,12 @@ public class OrderingResource {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
         }
 
+        double price = 0.0;
+
         List<Meal> meals = ordering.getMeals();
         for (Meal meal : meals){
             if (meal.getId() == mealId){
+                price = meal.getPrice();
                 meals.remove(meal);
                 break;
             }
@@ -109,9 +112,10 @@ public class OrderingResource {
         ordering.setMeals(meals);
         orderingRepository.persist(ordering);
 
+        // Initialization of the drinks collection to avoid LazyInitializationException during serialization.
         Hibernate.initialize(ordering.getDrinks());
 
-        return Response.ok(ordering).build();
+        return Response.ok(price).build();
     }
 
 }
