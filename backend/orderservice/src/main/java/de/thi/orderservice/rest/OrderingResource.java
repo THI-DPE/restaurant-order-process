@@ -90,6 +90,7 @@ public class OrderingResource {
         return Response.noContent().build(); // 204 No Content
     }
 
+    // PUT endpoint to remove a meal from an order
     @PUT
     @Path("/{id}/meals/{mealId}")
     @Transactional
@@ -116,6 +117,7 @@ public class OrderingResource {
         return Response.ok(price).build();
     }
 
+    // PUT endpoint to remove a drink from an order
     @PUT
     @Path("/{id}/drinks/{drinkId}")
     @Transactional
