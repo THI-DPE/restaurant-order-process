@@ -19,13 +19,6 @@ import static io.restassured.RestAssured.given;
 
 @QuarkusTest
 class OrderingResourceTest {
-    @Test
-    void testHelloEndpoint() {
-        given()
-          .when().get("/orders")
-          .then()
-             .statusCode(200);
-    }
 
     // Test for GET method to fetch all orders (Author: Ralf)
     @Test // JUnit annotation
@@ -110,7 +103,7 @@ class OrderingResourceTest {
         ordering.setTimestamp(LocalDateTime.parse("2025-01-03T12:00:00"));
         ordering.setProcessorId(1L);
 
-        // Bestellung anlegen
+        // create order
         int id = given()
                 .contentType(ContentType.JSON)
                 .body(ordering)
@@ -128,7 +121,7 @@ class OrderingResourceTest {
         updatedOrdering.setTimestamp(LocalDateTime.parse("2025-01-03T13:00:00"));
         updatedOrdering.setProcessorId(2L);
 
-        // Bestellung aktualisieren
+        // update order
         given()
                 .contentType(ContentType.JSON)
                 .body(updatedOrdering)
@@ -155,7 +148,7 @@ class OrderingResourceTest {
         ordering.setTimestamp(LocalDateTime.parse("2025-01-03T12:00:00"));
         ordering.setProcessorId(1L);
 
-        // Bestellung anlegen
+        // create order
         int id = given()
                 .contentType(ContentType.JSON)
                 .body(ordering)
@@ -165,18 +158,101 @@ class OrderingResourceTest {
                 .statusCode(201)
                 .extract().path("id");
 
-        // Bestellung löschen
+        // delete order
         given()
                 .when()
                 .delete("/orders/" + id)
                 .then()
                 .statusCode(204);
 
-        // Überprüfen, ob Bestellung gelöscht wurde
+        // Check if order has been deleted
         given()
                 .when()
                 .get("/orders/" + id)
                 .then()
                 .statusCode(404);
     }
+
+    @Test
+    void testRemoveDrink(){
+        Drink drink = new Drink();
+        drink.setPrice(1D);
+
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setDrinks(List.of(drink));
+        ordering.setMeals(List.of(new Meal()));
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2025-01-05T12:00:00"));
+        ordering.setProcessorId(1L);
+
+        // create order
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(ordering)
+                .when()
+                .post("/orders")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        // get id of drink in created order
+        int drinkId = given()
+                .when()
+                .get("/orders/" + id)
+                .then()
+                .statusCode(200)
+                .extract().path("drinks[0].id");
+
+        // remove drink
+        given()
+                .when()
+                .put("/orders/" + id + "/drinks/" + drinkId)
+                .then()
+                .statusCode(200)
+                .body(is("1.0"));
+
+    }
+
+    @Test
+    void testRemoveMeal(){
+        Meal meal = new Meal();
+        meal.setPrice(1D);
+
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setDrinks(List.of(new Drink()));
+        ordering.setMeals(List.of(meal));
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2025-01-05T12:00:00"));
+        ordering.setProcessorId(1L);
+
+        // create order
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(ordering)
+                .when()
+                .post("/orders")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        // get id of meal in created order
+        int mealId = given()
+                .when()
+                .get("/orders/" + id)
+                .then()
+                .statusCode(200)
+                .extract().path("meals[0].id");
+
+        // remove meal
+        given()
+                .when()
+                .put("/orders/" + id + "/meals/" + mealId)
+                .then()
+                .statusCode(200)
+                .body(is("1.0"));
+
+    }
+
 }
