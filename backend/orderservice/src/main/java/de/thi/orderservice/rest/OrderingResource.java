@@ -1,11 +1,13 @@
 package de.thi.orderservice.rest;
 
+import de.thi.orderservice.jpa.Meal;
 import de.thi.orderservice.jpa.Ordering;
 import de.thi.orderservice.jpa.OrderingRepository;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.hibernate.Hibernate;
 
 import java.util.List;
 
@@ -85,6 +87,31 @@ public class OrderingResource {
         }
         orderingRepository.delete(ordering);
         return Response.noContent().build(); // 204 No Content
+    }
+
+    @PUT
+    @Path("/{id}/meals/{mealId}")
+    @Transactional
+    public Response removeMeal(@PathParam("id") long id, @PathParam("mealId") long mealId) {
+        Ordering ordering = orderingRepository.findById(id);
+        if (ordering == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
+        }
+
+        List<Meal> meals = ordering.getMeals();
+        for (Meal meal : meals){
+            if (meal.getId() == mealId){
+                meals.remove(meal);
+                break;
+            }
+        }
+
+        ordering.setMeals(meals);
+        orderingRepository.persist(ordering);
+
+        Hibernate.initialize(ordering.getDrinks());
+
+        return Response.ok(ordering).build();
     }
 
 }
