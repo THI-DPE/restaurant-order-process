@@ -1,11 +1,14 @@
 package de.thi.orderservice.rest;
 
+import de.thi.orderservice.jpa.Drink;
+import de.thi.orderservice.jpa.Meal;
 import de.thi.orderservice.jpa.Ordering;
 import de.thi.orderservice.jpa.OrderingRepository;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.hibernate.Hibernate;
 
 import java.util.List;
 
@@ -85,6 +88,60 @@ public class OrderingResource {
         }
         orderingRepository.delete(ordering);
         return Response.noContent().build(); // 204 No Content
+    }
+
+    // PUT endpoint to remove a meal from an order
+    @PUT
+    @Path("/{id}/meals/{mealId}")
+    @Transactional
+    public Response removeMeal(@PathParam("id") long id, @PathParam("mealId") long mealId) {
+        Ordering ordering = orderingRepository.findById(id);
+        if (ordering == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
+        }
+
+        double price = 0.0;
+
+        List<Meal> meals = ordering.getMeals();
+        for (Meal meal : meals){
+            if (meal.getId() == mealId){
+                price = meal.getPrice();
+                meals.remove(meal);
+                break;
+            }
+        }
+
+        ordering.setMeals(meals);
+        orderingRepository.persist(ordering);
+
+        return Response.ok(price).build();
+    }
+
+    // PUT endpoint to remove a drink from an order
+    @PUT
+    @Path("/{id}/drinks/{drinkId}")
+    @Transactional
+    public Response removeDrink(@PathParam("id") long id, @PathParam("drinkId") long drinkId) {
+        Ordering ordering = orderingRepository.findById(id);
+        if (ordering == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
+        }
+
+        double price = 0.0;
+
+        List<Drink> drinks = ordering.getDrinks();
+        for (Drink drink : drinks){
+            if (drink.getId() == drinkId){
+                price = drink.getPrice();
+                drinks.remove(drink);
+                break;
+            }
+        }
+
+        ordering.setDrinks(drinks);
+        orderingRepository.persist(ordering);
+
+        return Response.ok(price).build();
     }
 
 }

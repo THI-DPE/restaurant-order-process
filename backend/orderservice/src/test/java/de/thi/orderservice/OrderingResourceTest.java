@@ -19,17 +19,10 @@ import static io.restassured.RestAssured.given;
 
 @QuarkusTest
 class OrderingResourceTest {
-    @Test
-    void testHelloEndpoint() {
-        given()
-          .when().get("/orders")
-          .then()
-             .statusCode(200);
-    }
 
     // Test for GET method to fetch all orders (Author: Ralf)
     @Test // JUnit annotation
-    public void testGetOrders() {
+    void testGetOrders() {
         // usage of REST assured Java library for testing REST APIs
         given() // sets up request (query parameters, headers or body can be added)
                 .when().get("/orders") // when() signals start of the actual request
@@ -41,12 +34,20 @@ class OrderingResourceTest {
 
     // Test for POST method to create a new order (Author: Ralf)
     @Test
-    public void testCreateOrder() {
-        String orderJson = "{ \"customerId\": 1, \"meals\": [1], \"drinks\": [1], \"timestamp\": \"2024-12-26T12:00:00\", \"processorId\": 1, \"status\": \"PROCESSING\" }";
+    void testCreateOrder() {
+        // Create an order for testing
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2024-12-26T12:00:00"));
+        ordering.setProcessorId(1L);
+        ordering.setMeals(List.of(new Meal()));
+        ordering.setDrinks(List.of(new Drink()));
+
 
         given()
                 .contentType(ContentType.JSON)
-                .body(orderJson)
+                .body(ordering)
                 .when().post("/orders")
                 .then()
                 .statusCode(201)
@@ -58,14 +59,20 @@ class OrderingResourceTest {
     // Test for GET orderById (Author: Ralf)
     @Test
     @Transactional // Ensures that data setup and cleanup occur within a transaction
-    public void testGetOrderById() {
+    void testGetOrderById() {
         // Create an order for testing
-        String orderJson = "{ \"customerId\": 1, \"meals\": [1], \"drinks\": [1], \"timestamp\": \"2024-12-26T12:00:00\", \"processorId\": 1, \"status\": \"PROCESSING\" }";
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2024-12-26T12:00:00"));
+        ordering.setProcessorId(1L);
+        ordering.setMeals(List.of(new Meal()));
+        ordering.setDrinks(List.of(new Drink()));
 
         // POST request to create the order and extract the generated order ID
         Long orderId = given()
                 .contentType(ContentType.JSON)
-                .body(orderJson)
+                .body(ordering)
                 .when()
                 .post("/orders")
                 .then()
@@ -81,9 +88,7 @@ class OrderingResourceTest {
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .body("id", is(orderId.intValue())) // Check that the ID matches
-                // intValue --> convert Long value of orderId to int (orderId from Ordering entity is inherited from PanacheEntity and the id field there is a long while response will be int
-                // is() --> static method from Hamcrest library that creates a matcher to compare the actual value in the response with the expected value
+                .body("id", is(orderId))
                 .body("customerId", is(1)) // Check that the customer ID is correct
                 .body("status", is("PROCESSING")); // Validate the status
     }
@@ -98,7 +103,7 @@ class OrderingResourceTest {
         ordering.setTimestamp(LocalDateTime.parse("2025-01-03T12:00:00"));
         ordering.setProcessorId(1L);
 
-        // Bestellung anlegen
+        // create order
         int id = given()
                 .contentType(ContentType.JSON)
                 .body(ordering)
@@ -116,7 +121,7 @@ class OrderingResourceTest {
         updatedOrdering.setTimestamp(LocalDateTime.parse("2025-01-03T13:00:00"));
         updatedOrdering.setProcessorId(2L);
 
-        // Bestellung aktualisieren
+        // update order
         given()
                 .contentType(ContentType.JSON)
                 .body(updatedOrdering)
@@ -143,7 +148,7 @@ class OrderingResourceTest {
         ordering.setTimestamp(LocalDateTime.parse("2025-01-03T12:00:00"));
         ordering.setProcessorId(1L);
 
-        // Bestellung anlegen
+        // create order
         int id = given()
                 .contentType(ContentType.JSON)
                 .body(ordering)
@@ -153,18 +158,101 @@ class OrderingResourceTest {
                 .statusCode(201)
                 .extract().path("id");
 
-        // Bestellung löschen
+        // delete order
         given()
                 .when()
                 .delete("/orders/" + id)
                 .then()
                 .statusCode(204);
 
-        // Überprüfen, ob Bestellung gelöscht wurde
+        // Check if order has been deleted
         given()
                 .when()
                 .get("/orders/" + id)
                 .then()
                 .statusCode(404);
     }
+
+    @Test
+    void testRemoveDrink(){
+        Drink drink = new Drink();
+        drink.setPrice(1D);
+
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setDrinks(List.of(drink));
+        ordering.setMeals(List.of(new Meal()));
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2025-01-05T12:00:00"));
+        ordering.setProcessorId(1L);
+
+        // create order
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(ordering)
+                .when()
+                .post("/orders")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        // get id of drink in created order
+        int drinkId = given()
+                .when()
+                .get("/orders/" + id)
+                .then()
+                .statusCode(200)
+                .extract().path("drinks[0].id");
+
+        // remove drink
+        given()
+                .when()
+                .put("/orders/" + id + "/drinks/" + drinkId)
+                .then()
+                .statusCode(200)
+                .body(is("1.0"));
+
+    }
+
+    @Test
+    void testRemoveMeal(){
+        Meal meal = new Meal();
+        meal.setPrice(1D);
+
+        Ordering ordering = new Ordering();
+        ordering.setCustomerId(1L);
+        ordering.setDrinks(List.of(new Drink()));
+        ordering.setMeals(List.of(meal));
+        ordering.setStatus(Ordering.StatusEnum.PROCESSING);
+        ordering.setTimestamp(LocalDateTime.parse("2025-01-05T12:00:00"));
+        ordering.setProcessorId(1L);
+
+        // create order
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(ordering)
+                .when()
+                .post("/orders")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        // get id of meal in created order
+        int mealId = given()
+                .when()
+                .get("/orders/" + id)
+                .then()
+                .statusCode(200)
+                .extract().path("meals[0].id");
+
+        // remove meal
+        given()
+                .when()
+                .put("/orders/" + id + "/meals/" + mealId)
+                .then()
+                .statusCode(200)
+                .body(is("1.0"));
+
+    }
+
 }

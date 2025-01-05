@@ -34,4 +34,7 @@ public class Drink extends PanacheEntity {
         this.price = price;
     }
 
+    public Long getId() {
+        return id;
+    }
 }
