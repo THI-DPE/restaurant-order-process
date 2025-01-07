@@ -5,12 +5,14 @@ import de.thi.orderservice.jpa.Meal;
 import de.thi.orderservice.jpa.Ordering;
 import de.thi.orderservice.jpa.OrderingRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.hibernate.Hibernate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Path("/orders") //class level path
 public class OrderingResource {
@@ -44,7 +46,7 @@ public class OrderingResource {
     @Consumes(MediaType.APPLICATION_JSON) // Explicitly specify JSON as input media type for clarity (JSON would be Quarkus default)
     @Produces(MediaType.APPLICATION_JSON) // Explicitly specify JSON output media type for clarity (JSON would be Quarkus default)
     @Transactional // Transactional annotation ensures that the method runs within a transaction
-    public Response createOrder(Ordering ordering) {
+    public Response createOrder(@Valid Ordering ordering) {
         ordering.persist();
         return Response.status(Response.Status.CREATED).entity(ordering).build();
         // Response --> A JAX class for building and returning HTTP responses
@@ -58,7 +60,7 @@ public class OrderingResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response updateOrder(@PathParam("id") Long id, Ordering ordering){
+    public Response updateOrder(@PathParam("id") Long id, @Valid Ordering ordering){
         Ordering existingOrdering = orderingRepository.findById(id);
         if (existingOrdering == null) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
@@ -76,7 +78,6 @@ public class OrderingResource {
         return Response.ok(existingOrdering).build();
     }
 
-
     // DELETE endpoint to delete an order
     @DELETE
     @Path("/{id}")
@@ -91,7 +92,7 @@ public class OrderingResource {
     }
 
     // PUT endpoint to remove a meal from an order
-    @PUT
+    @DELETE
     @Path("/{id}/meals/{mealId}")
     @Transactional
     public Response removeMeal(@PathParam("id") long id, @PathParam("mealId") long mealId) {
@@ -100,25 +101,22 @@ public class OrderingResource {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
         }
 
-        double price = 0.0;
+        Optional<Meal> mealToRemove = ordering.getMeals().stream()
+                .filter(meal -> meal.getId() == mealId)
+                .findFirst();
 
-        List<Meal> meals = ordering.getMeals();
-        for (Meal meal : meals){
-            if (meal.getId() == mealId){
-                price = meal.getPrice();
-                meals.remove(meal);
-                break;
-            }
+        if (mealToRemove.isPresent()) {
+            double price = mealToRemove.get().getPrice();
+            ordering.getMeals().remove(mealToRemove.get());
+            orderingRepository.persist(ordering);
+            return Response.ok(price).build();
+        } else {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Meal " + mealId + " not found in order " + id).build());
         }
-
-        ordering.setMeals(meals);
-        orderingRepository.persist(ordering);
-
-        return Response.ok(price).build();
     }
 
     // PUT endpoint to remove a drink from an order
-    @PUT
+    @DELETE
     @Path("/{id}/drinks/{drinkId}")
     @Transactional
     public Response removeDrink(@PathParam("id") long id, @PathParam("drinkId") long drinkId) {
@@ -127,21 +125,17 @@ public class OrderingResource {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Order " + id + " not found").build()); //404 error handling
         }
 
-        double price = 0.0;
+        Optional<Drink> drinkToRemove = ordering.getDrinks().stream()
+                .filter(drink -> drink.getId() == drinkId)
+                .findFirst();
 
-        List<Drink> drinks = ordering.getDrinks();
-        for (Drink drink : drinks){
-            if (drink.getId() == drinkId){
-                price = drink.getPrice();
-                drinks.remove(drink);
-                break;
-            }
+        if (drinkToRemove.isPresent()) {
+            double price = drinkToRemove.get().getPrice();
+            ordering.getDrinks().remove(drinkToRemove.get());
+            orderingRepository.persist(ordering);
+            return Response.ok(price).build();
+        } else {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Drink " + drinkId + " not found in order " + id).build());
         }
-
-        ordering.setDrinks(drinks);
-        orderingRepository.persist(ordering);
-
-        return Response.ok(price).build();
     }
-
 }
