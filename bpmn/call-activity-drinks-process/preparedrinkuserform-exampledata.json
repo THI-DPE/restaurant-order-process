@@ -1,0 +1,17 @@
+{
+  "results": [
+    {
+      "value": "preparation successful",
+      "label": "preparation successful"
+    },
+    {
+      "value": "preparation must be repeated",
+      "label": "preparation must be repeated"
+    },
+    {
+      "value": "preparation failed",
+      "label": "preparation failed"
+    }
+  ],
+  "result": "preparation must be repeated"
+}

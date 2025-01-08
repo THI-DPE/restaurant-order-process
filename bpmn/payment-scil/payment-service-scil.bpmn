@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
+  <bpmn:collaboration id="Collaboration_1vx5ytn">
+    <bpmn:participant id="Participant_04r4x5f" name="Payment_service_SCIL" processRef="Process_payment_service_scil_zecjx7e" />
+    <bpmn:participant id="Participant_0v8gf11" name="Error_process" />
+    <bpmn:participant id="Participant_0dw5kou" name="Payment_service" />
+    <bpmn:messageFlow id="Flow_08iaw56" name="payment service message" sourceRef="Participant_0v8gf11" targetRef="StartEvent_1" />
+    <bpmn:messageFlow id="Flow_08zi2jr" name="payment service return message" sourceRef="Participant_0dw5kou" targetRef="Activity_0lb1x85" />
+    <bpmn:messageFlow id="Flow_0lyvxsb" name="reimbursement confirmation" sourceRef="Activity_1hai9rs" targetRef="Participant_0v8gf11" />
+    <bpmn:textAnnotation id="TextAnnotation_1r2fhup">
+      <bpmn:text>service task --&gt; post returned transaction_id</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0smd6cj" associationDirection="None" sourceRef="Activity_0qpzdpu" targetRef="TextAnnotation_1r2fhup" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_payment_service_scil_zecjx7e" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_0qpzdpu" />
+    <bpmn:sequenceFlow id="Flow_12pkbxb" sourceRef="Activity_0qpzdpu" targetRef="Activity_0lb1x85" />
+    <bpmn:startEvent id="StartEvent_1" name="payment service message received">
+      <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1tkodez" messageRef="payment_service_message">
+        <bpmn:extensionElements>
+          <spiffworkflow:messageVariable>payment_service_message</spiffworkflow:messageVariable>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_02ejphi" sourceRef="Activity_0lb1x85" targetRef="Activity_1hai9rs" />
+    <bpmn:sequenceFlow id="Flow_1pwgg3p" sourceRef="Activity_1hai9rs" targetRef="EndEvent_1" />
+    <bpmn:receiveTask id="Activity_0lb1x85" name="Wait for payment service return message" messageRef="payment_service_return_message" spiffworkflow:isMatchingCorrelation="true">
+      <bpmn:extensionElements>
+        <spiffworkflow:messageVariable>payment_service_return_message</spiffworkflow:messageVariable>
+        <spiffworkflow:processVariableCorrelation>
+          <spiffworkflow:propertyId>transaction_id</spiffworkflow:propertyId>
+          <spiffworkflow:expression>transaction_id</spiffworkflow:expression>
+        </spiffworkflow:processVariableCorrelation>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12pkbxb</bpmn:incoming>
+      <bpmn:outgoing>Flow_02ejphi</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sendTask id="Activity_1hai9rs" name="Send reimbursement confirmation" messageRef="reimbursement_confirmation_SCIL">
+      <bpmn:extensionElements>
+        <spiffworkflow:messagePayload>{
+  "orderId": payment_service_message["orderId"],
+  "customerId": payment_service_return_message["customerId"],
+  "transaction_id": payment_service_return_message["transaction_id"],
+  "reimbursement_amount": payment_service_return_message["reimbursement_amount"],
+  "payment_method": payment_service_return_message["payment_method"],
+  "account_details": payment_service_return_message["account_details"],
+  "timestamp": payment_service_return_message["timestamp"]
+}
+</spiffworkflow:messagePayload>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_02ejphi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pwgg3p</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:scriptTask id="Activity_0qpzdpu" name="Send reimbursement amount to payment service">
+      <bpmn:extensionElements>
+        <spiffworkflow:instructionsForEndUser>This is an example **Manual Task**. A **Manual Task** is designed to allow someone to complete a task outside of the system and then report back that it is complete. You can click the *Continue* button to proceed. When you are done running this process, you can edit the **Process Model** to include a:
+
+ * **Script Task** - write a short snippet of python code to update some data
+ *  **User Task** - generate a form that collects information from a user
+ * **Service Task** - communicate with an external API to fetch or update some data.
+
+You can also change the text you are reading here by updating the *Instructions* on this example manual task.</spiffworkflow:instructionsForEndUser>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
+      <bpmn:outgoing>Flow_12pkbxb</bpmn:outgoing>
+      <bpmn:script>transaction_id = 1</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEvent_1" name="Reimbursement completed">
+      <bpmn:incoming>Flow_1pwgg3p</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="reimbursement_confirmation" name="reimbursement_confirmation" />
+  <bpmn:message id="payment_service_message" name="payment_service_message" />
+  <bpmn:message id="payment_service_return_message" name="payment_service_return_message" />
+  <bpmn:correlationProperty id="transaction_id" name="transaction_id">
+    <bpmn:correlationPropertyRetrievalExpression messageRef="payment_service_return_message">
+      <bpmn:formalExpression>transaction_id</bpmn:formalExpression>
+    </bpmn:correlationPropertyRetrievalExpression>
+  </bpmn:correlationProperty>
+  <bpmn:message id="reimbursement_confirmation_SCIL" name="reimbursement_confirmation_SCIL" />
+  <bpmn:correlationProperty id="orderId" name="orderId">
+    <bpmn:correlationPropertyRetrievalExpression messageRef="reimbursement_confirmation_SCIL">
+      <bpmn:formalExpression>orderId</bpmn:formalExpression>
+    </bpmn:correlationPropertyRetrievalExpression>
+  </bpmn:correlationProperty>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1vx5ytn">
+      <bpmndi:BPMNShape id="Participant_04r4x5f_di" bpmnElement="Participant_04r4x5f" isHorizontal="true">
+        <dc:Bounds x="20" y="52" width="800" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ieoj93_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="152" y="202" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03o4rua_di" bpmnElement="Activity_0lb1x85">
+        <dc:Bounds x="430" y="137" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0npw65j_di" bpmnElement="Activity_1hai9rs">
+        <dc:Bounds x="590" y="137" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1k2d3j7_di" bpmnElement="Activity_0qpzdpu">
+        <dc:Bounds x="270" y="137" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="742" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="721" y="202" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
+        <di:waypoint x="215" y="177" />
+        <di:waypoint x="270" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12pkbxb_di" bpmnElement="Flow_12pkbxb">
+        <di:waypoint x="370" y="177" />
+        <di:waypoint x="430" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02ejphi_di" bpmnElement="Flow_02ejphi">
+        <di:waypoint x="530" y="177" />
+        <di:waypoint x="590" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pwgg3p_di" bpmnElement="Flow_1pwgg3p">
+        <di:waypoint x="690" y="177" />
+        <di:waypoint x="742" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_1ydsj3w_di" bpmnElement="Participant_0v8gf11" isHorizontal="true">
+        <dc:Bounds x="20" y="-90" width="800" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_0hxawo4_di" bpmnElement="Participant_0dw5kou" isHorizontal="true">
+        <dc:Bounds x="20" y="340" width="800" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1r2fhup_di" bpmnElement="TextAnnotation_1r2fhup">
+        <dc:Bounds x="370" y="70" width="100" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0smd6cj_di" bpmnElement="Association_0smd6cj">
+        <di:waypoint x="363" y="138" />
+        <di:waypoint x="377" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08iaw56_di" bpmnElement="Flow_08iaw56">
+        <di:waypoint x="197" y="-30" />
+        <di:waypoint x="197" y="159" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="209" y="6" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08zi2jr_di" bpmnElement="Flow_08zi2jr">
+        <di:waypoint x="480" y="340" />
+        <di:waypoint x="480" y="217" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="489" y="276" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lyvxsb_di" bpmnElement="Flow_0lyvxsb">
+        <di:waypoint x="640" y="137" />
+        <di:waypoint x="640" y="-30" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="552" y="24" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

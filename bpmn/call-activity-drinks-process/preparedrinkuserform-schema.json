@@ -1,0 +1,17 @@
+{
+  "title": "Preparation result",
+  "description": "Indicate whether the preparation was successful, needs to be repeated due to some human error, or has failed and cannot be salvaged (e.g., due to lack of ingredients).",
+  "type": "object",
+  "properties": {
+    "result": {
+      "title": "Select the outcome of the preparation",
+      "type": "string",
+      "enum": [
+        "preparation successful",
+        "preparation must be repeated",
+        "preparation failed"
+      ]
+    }
+  },
+  "required": ["result"]
+}

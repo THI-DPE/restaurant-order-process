@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
+  <bpmn:collaboration id="Collaboration_11g3zdm">
+    <bpmn:participant id="Participant_11tt5ow" name="Prepare drink" processRef="Process_call_activity_drinks_process_355ua1x" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_call_activity_drinks_process_355ua1x" isExecutable="true">
+    <bpmn:ioSpecification>
+      <bpmn:dataInput id="drink" name="drink" />
+      <bpmn:dataOutput id="successfully_prepared_drink" name="successfully_prepared_drink" />
+      <bpmn:inputSet>
+        <bpmn:dataInputRefs>drink</bpmn:dataInputRefs>
+      </bpmn:inputSet>
+      <bpmn:outputSet>
+        <bpmn:dataOutputRefs>successfully_prepared_drink</bpmn:dataOutputRefs>
+      </bpmn:outputSet>
+    </bpmn:ioSpecification>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Gateway_0sacn4j" />
+    <bpmn:exclusiveGateway id="Gateway_0sacn4j">
+      <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
+      <bpmn:incoming>Flow_0uo0ip7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gffg35</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_1" name="Drink preparation successful">
+      <bpmn:incoming>Flow_0j8dnkv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0j8dnkv" sourceRef="Activity_1lbd74y" targetRef="EndEvent_1" />
+    <bpmn:sequenceFlow id="Flow_099sp77" name="Preparation successful" sourceRef="Gateway_1uwjat7" targetRef="Activity_1lbd74y">
+      <bpmn:conditionExpression>result == "preparation successful"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_1avy1ad" name="Pour drink">
+      <bpmn:extensionElements>
+        <spiffworkflow:properties>
+          <spiffworkflow:property name="formJsonSchemaFilename" value="preparedrinkuserform-schema.json" />
+          <spiffworkflow:property name="formUiSchemaFilename" value="preparedrinkuserform-uischema.json" />
+        </spiffworkflow:properties>
+        <spiffworkflow:instructionsForEndUser />
+        <spiffworkflow:preScript># results = "results": [
+#     {
+#       "value": "preparation successful",
+#       "label": "preparation successful"
+#     },
+#     {
+#       "value": "preparation must be repeated",
+#       "label": "preparation must be repeated"
+#     },
+#     {
+#       "value": "preparation failed",
+#       "label": "preparation failed"
+#     }
+#   ],
+#   "result": "preparation must be repeated"
+# }</spiffworkflow:preScript>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1gffg35</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f9dhc7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1gffg35" sourceRef="Gateway_0sacn4j" targetRef="Activity_1avy1ad" />
+    <bpmn:sequenceFlow id="Flow_1f9dhc7" sourceRef="Activity_1avy1ad" targetRef="Gateway_1uwjat7" />
+    <bpmn:sequenceFlow id="Flow_1gw409k" name="Preparation failed" sourceRef="Gateway_1uwjat7" targetRef="Activity_0go5arj">
+      <bpmn:conditionExpression>result == "preparation failed"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_1lbd74y" name="Mark drink as successfully prepared">
+      <bpmn:incoming>Flow_099sp77</bpmn:incoming>
+      <bpmn:outgoing>Flow_0j8dnkv</bpmn:outgoing>
+      <bpmn:script>successfully_prepared_drink = drink</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_1uwjat7" name="What was the preparation result?">
+      <bpmn:incoming>Flow_1f9dhc7</bpmn:incoming>
+      <bpmn:outgoing>Flow_099sp77</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1gw409k</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0uo0ip7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_1vwki6q" name="Drink preparation failed">
+      <bpmn:incoming>Flow_0ex2cog</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ex2cog" sourceRef="Activity_0go5arj" targetRef="Event_1vwki6q" />
+    <bpmn:scriptTask id="Activity_0go5arj" name="Mark drink as failed">
+      <bpmn:incoming>Flow_1gw409k</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ex2cog</bpmn:outgoing>
+      <bpmn:script>successfully_prepared_drink = []</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0uo0ip7" name="Preparation must be repeated" sourceRef="Gateway_1uwjat7" targetRef="Gateway_0sacn4j">
+      <bpmn:conditionExpression>result == "preparation must be repeated"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_11g3zdm">
+      <bpmndi:BPMNShape id="Participant_11tt5ow_di" bpmnElement="Participant_11tt5ow" isHorizontal="true">
+        <dc:Bounds x="60" y="70" width="948" height="380" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0sacn4j_di" bpmnElement="Gateway_0sacn4j" isMarkerVisible="true">
+        <dc:Bounds x="235" y="152" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="782" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="758" y="202" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1eqw99i_di" bpmnElement="Activity_1avy1ad">
+        <dc:Bounds x="310" y="137" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0sklg1k_di" bpmnElement="Activity_1lbd74y">
+        <dc:Bounds x="590" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1uwjat7_di" bpmnElement="Gateway_1uwjat7" isMarkerVisible="true">
+        <dc:Bounds x="455" y="152" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="447" y="110" width="66" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1vwki6q_di" bpmnElement="Event_1vwki6q">
+        <dc:Bounds x="782" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="758" y="345" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wu5k9r_di" bpmnElement="Activity_0go5arj">
+        <dc:Bounds x="590" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="drink">
+        <dc:Bounds x="112" y="105" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="120" y="162" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="successfully_prepared_drink">
+        <dc:Bounds x="912" y="125" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="893" y="182" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
+        <di:waypoint x="215" y="177" />
+        <di:waypoint x="235" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j8dnkv_di" bpmnElement="Flow_0j8dnkv">
+        <di:waypoint x="690" y="177" />
+        <di:waypoint x="782" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_099sp77_di" bpmnElement="Flow_099sp77">
+        <di:waypoint x="505" y="177" />
+        <di:waypoint x="590" y="177" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="516" y="186" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gffg35_di" bpmnElement="Flow_1gffg35">
+        <di:waypoint x="285" y="177" />
+        <di:waypoint x="310" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f9dhc7_di" bpmnElement="Flow_1f9dhc7">
+        <di:waypoint x="410" y="177" />
+        <di:waypoint x="455" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gw409k_di" bpmnElement="Flow_1gw409k">
+        <di:waypoint x="490" y="192" />
+        <di:waypoint x="490" y="320" />
+        <di:waypoint x="590" y="320" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="501" y="297" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ex2cog_di" bpmnElement="Flow_0ex2cog">
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="782" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uo0ip7_di" bpmnElement="Flow_0uo0ip7">
+        <di:waypoint x="470" y="192" />
+        <di:waypoint x="470" y="320" />
+        <di:waypoint x="260" y="320" />
+        <di:waypoint x="260" y="202" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="323" y="290" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
