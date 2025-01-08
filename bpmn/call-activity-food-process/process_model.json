@@ -1,0 +1,9 @@
+{
+    "description": "",
+    "display_name": "Call_activity_food_process",
+    "exception_notification_addresses": [],
+    "fault_or_suspend_on_exception": "fault",
+    "metadata_extraction_paths": null,
+    "primary_file_name": "call-activity-food-preparation.bpmn",
+    "primary_process_id": "Process_call_activity_food_preparation_355ua1x"
+}
