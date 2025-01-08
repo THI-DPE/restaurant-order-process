@@ -30,7 +30,8 @@ public class Ordering extends PanacheEntity {
     )
     private List<Drink> drinks;
 
-    @Column(nullable = false)
+    //TODO:needs to be adjusted back to false again
+    @Column(nullable = true)
     private LocalDateTime timestamp;
 
     @Column(nullable = false)
