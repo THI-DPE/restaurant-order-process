@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <bpmn:collaboration id="Collaboration_1vx5ytn">
     <bpmn:participant id="Participant_04r4x5f" name="Payment_service_SCIL" processRef="Process_payment_service_scil_zecjx7e" />
     <bpmn:participant id="Participant_0v8gf11" name="Error_process" />
@@ -11,13 +11,17 @@
       <bpmn:text>service task --&gt; post returned transaction_id</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0smd6cj" associationDirection="None" sourceRef="Activity_0qpzdpu" targetRef="TextAnnotation_1r2fhup" />
+    <bpmn:correlationKey id="CorrelationKey_17aqia0" name="MainCorrelationKey">
+      <bpmn:correlationPropertyRef>transaction_id</bpmn:correlationPropertyRef>
+      <bpmn:correlationPropertyRef>orderId</bpmn:correlationPropertyRef>
+    </bpmn:correlationKey>
   </bpmn:collaboration>
   <bpmn:process id="Process_payment_service_scil_zecjx7e" isExecutable="true">
     <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_0qpzdpu" />
     <bpmn:sequenceFlow id="Flow_12pkbxb" sourceRef="Activity_0qpzdpu" targetRef="Activity_0lb1x85" />
     <bpmn:startEvent id="StartEvent_1" name="payment service message received">
       <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1tkodez" messageRef="payment_service_message">
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1tkodez" messageRef="payment_service_message1">
         <bpmn:extensionElements>
           <spiffworkflow:messageVariable>payment_service_message</spiffworkflow:messageVariable>
         </bpmn:extensionElements>
@@ -40,7 +44,7 @@
       <bpmn:extensionElements>
         <spiffworkflow:messagePayload>{
   "orderId": payment_service_message["orderId"],
-  "customerId": payment_service_return_message["customerId"],
+  "customerId": payment_service_message["customerId"],
   "transaction_id": payment_service_return_message["transaction_id"],
   "reimbursement_amount": payment_service_return_message["reimbursement_amount"],
   "payment_method": payment_service_return_message["payment_method"],
@@ -71,7 +75,6 @@ You can also change the text you are reading here by updating the *Instructions*
     </bpmn:endEvent>
   </bpmn:process>
   <bpmn:message id="reimbursement_confirmation" name="reimbursement_confirmation" />
-  <bpmn:message id="payment_service_message" name="payment_service_message" />
   <bpmn:message id="payment_service_return_message" name="payment_service_return_message" />
   <bpmn:correlationProperty id="transaction_id" name="transaction_id">
     <bpmn:correlationPropertyRetrievalExpression messageRef="payment_service_return_message">
@@ -84,6 +87,7 @@ You can also change the text you are reading here by updating the *Instructions*
       <bpmn:formalExpression>orderId</bpmn:formalExpression>
     </bpmn:correlationPropertyRetrievalExpression>
   </bpmn:correlationProperty>
+  <bpmn:message id="payment_service_message1" name="payment_service_message1" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1vx5ytn">
       <bpmndi:BPMNShape id="Participant_04r4x5f_di" bpmnElement="Participant_04r4x5f" isHorizontal="true">
