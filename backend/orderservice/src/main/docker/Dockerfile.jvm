@@ -78,22 +78,27 @@
 #
 ###
 
-FROM maven:3.9.4-eclipse-temurin-17 AS build
+FROM maven:3.9.4-eclipse-temurin-21 AS build
 WORKDIR /app
 
 COPY . .
 
-RUN mvn clean package -DskipTests
+
+# Need this for Mac Java Bug
+ARG TARGETPLATFORM
+RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then export JAVA_TOOL_OPTIONS="-XX:UseSVE=0"; fi && \
+    mvn clean package -DskipTests \
+
 FROM registry.access.redhat.com/ubi8/openjdk-21:1.20
 
 ENV LANGUAGE='en_US:en'
 
 
 # We make four distinct layers so if there are application changes the library layers can be re-used
-COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
-COPY --chown=185 target/quarkus-app/*.jar /deployments/
-COPY --chown=185 target/quarkus-app/app/ /deployments/app/
-COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
+COPY --from=build /app/target/quarkus-app/lib/ /deployments/lib/
+COPY --from=build /app/target/quarkus-app/*.jar /deployments/
+COPY --from=build /app/target/quarkus-app/app/ /deployments/app/
+COPY --from=build /app/target/quarkus-app/quarkus/ /deployments/quarkus/
 
 EXPOSE 8080
 USER 185
