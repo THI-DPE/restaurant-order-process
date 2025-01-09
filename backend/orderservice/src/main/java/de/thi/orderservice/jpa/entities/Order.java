@@ -22,7 +22,7 @@ public class Order extends PanacheEntity {
     private Long processorId;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus orderStatus;
 
     public enum OrderStatus {
         PROCESSING,
@@ -71,7 +71,7 @@ public class Order extends PanacheEntity {
     }
 
     public OrderStatus getStatus() {
-        return status;
+        return orderStatus;
     }
 
     public void setStatus(OrderStatus status) {

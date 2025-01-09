@@ -1,6 +1,7 @@
 package de.thi.orderservice.rest;
 
 import de.thi.orderservice.jpa.entities.Order;
+import de.thi.orderservice.jpa.entities.OrderItem;
 import de.thi.orderservice.service.OrderService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -55,6 +56,28 @@ public class OrderController {
         boolean deleted = orderService.delete(id);
         if (deleted) {
             return Response.noContent().build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @PUT
+    @Path("/{id}/status")
+    public Response updateOrderStatus(@PathParam("id") Long id, Order.OrderStatus status) {
+        Order updatedOrder = orderService.updateOrderStatus(id, status);
+        if (updatedOrder != null) {
+            return Response.ok(updatedOrder).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @PUT
+    @Path("/{id}/productId/{productId}")
+    public Response updateProductStatus(@PathParam("id") Long id, @PathParam("productId") Long productId, OrderItem.OrderItemStatus status) {
+        Order updatedOrder = orderService.updateProductStatus(id, productId, status);
+        if (updatedOrder != null) {
+            return Response.ok(updatedOrder).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

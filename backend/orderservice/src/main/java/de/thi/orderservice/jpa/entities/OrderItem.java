@@ -7,7 +7,13 @@ import jakarta.persistence.Entity;
 public class OrderItem extends PanacheEntity {
 
     private Long menuId;
-    private String status;
+    private OrderItemStatus orderItemStatus;
+
+    public enum OrderItemStatus {
+        PROCESSING,
+        COMPLETED,
+        FAILED
+    }
 
     public Long getId() {
         return id;
@@ -25,11 +31,11 @@ public class OrderItem extends PanacheEntity {
         this.menuId = menuId;
     }
 
-    public String getStatus() {
-        return status;
+    public OrderItemStatus getOrderItemstatus() {
+        return orderItemStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOrderItemStatus(OrderItemStatus status) {
+        this.orderItemStatus = status;
     }
 }

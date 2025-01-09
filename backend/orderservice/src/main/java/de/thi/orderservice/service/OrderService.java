@@ -1,6 +1,7 @@
 package de.thi.orderservice.service;
 
 import de.thi.orderservice.jpa.entities.Order;
+import de.thi.orderservice.jpa.entities.OrderItem;
 import de.thi.orderservice.jpa.repository.OrderRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -49,5 +50,31 @@ public class OrderService {
     @Transactional
     public boolean delete(Long id) {
         return orderRepository.deleteById(id);
+    }
+
+    public Order updateOrderStatus(Long id, Order.OrderStatus status) {
+        Order existingOrder = orderRepository.findById(id);
+        if (existingOrder != null) {
+            existingOrder.setStatus(status);
+            orderRepository.persist(existingOrder);
+            return existingOrder;
+        }
+        return null;
+    }
+
+
+    @Transactional
+    public Order updateProductStatus(Long id, Long productId, OrderItem.OrderItemStatus status) {
+        Order existingOrder = orderRepository.findById(id);
+        if (existingOrder != null) {
+            existingOrder.getProducts().stream()
+                    .flatMap(productCategory -> productCategory.getOrderItems().stream())
+                    .filter(orderItem -> orderItem.getId().equals(productId))
+                    .findFirst()
+                    .ifPresent(orderItem -> orderItem.setOrderItemStatus(status));
+            orderRepository.persist(existingOrder);
+            return existingOrder;
+        }
+        return null;
     }
 }
