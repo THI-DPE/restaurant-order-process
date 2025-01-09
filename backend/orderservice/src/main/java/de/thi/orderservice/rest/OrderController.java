@@ -5,13 +5,19 @@ import de.thi.orderservice.jpa.entities.OrderItem;
 import de.thi.orderservice.rest.dto.UpdateOrderItemStatusDTO;
 import de.thi.orderservice.rest.dto.UpdateOrderStatusDTO;
 import de.thi.orderservice.service.OrderItemService;
+import de.thi.orderservice.jpa.entities.OrderItem;
+import de.thi.orderservice.jpa.entities.ProductCategory;
+import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import de.thi.orderservice.service.OrderService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
@@ -40,7 +46,35 @@ public class OrderController {
     }
 
     @POST
-    public Response createOrder(Order order) {
+    public Response createOrder(CreateOrderDTO orderDTO) {
+        Order order = new Order();
+        order.setCustomerId(orderDTO.getCustomerId());
+        order.setOrderTimestamp(orderDTO.getOrderTimestamp());
+        order.setProcessorId(null);
+        order.setStatus(Order.OrderStatus.PROCESSING);
+
+        List<ProductCategory> productCategories = new ArrayList<>();
+
+        for (CreateOrderDTO.ProductCategoryDTO dto : orderDTO.getProducts()) {
+            ProductCategory category = new ProductCategory();
+            // TODO: Hier könnte man noch einen Check machen, ob es die Category gibt im MenuService
+            category.setProductCategoryName(dto.getProductCategoryName());
+
+            List<OrderItem> orderItems = new ArrayList<>();
+            for (Long menuId : dto.getProductIds()) {
+                OrderItem orderItem = new OrderItem();
+                // TODO: Rename zu ProductId
+                orderItem.setMenuId(menuId);
+                orderItem.setOrderItemStatus(OrderItem.OrderItemStatus.PROCESSING);
+                orderItems.add(orderItem);
+            }
+
+            category.setOrderItems(orderItems);
+            productCategories.add(category);
+        }
+
+        order.setProducts(productCategories);
+
         Order createdOrder = orderService.create(order);
         return Response.status(Response.Status.CREATED).entity(createdOrder).build();
     }
