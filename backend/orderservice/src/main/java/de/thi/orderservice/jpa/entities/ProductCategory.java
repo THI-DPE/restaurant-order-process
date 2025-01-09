@@ -16,7 +16,6 @@ public class ProductCategory extends PanacheEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-
     public long getId() {
         return id;
     }

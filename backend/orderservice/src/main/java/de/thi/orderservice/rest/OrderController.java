@@ -47,35 +47,7 @@ public class OrderController {
 
     @POST
     public Response createOrder(CreateOrderDTO orderDTO) {
-        Order order = new Order();
-        order.setCustomerId(orderDTO.getCustomerId());
-        order.setOrderTimestamp(orderDTO.getOrderTimestamp());
-        order.setProcessorId(null);
-        order.setStatus(Order.OrderStatus.PROCESSING);
-
-        List<ProductCategory> productCategories = new ArrayList<>();
-
-        for (CreateOrderDTO.ProductCategoryDTO dto : orderDTO.getProducts()) {
-            ProductCategory category = new ProductCategory();
-            // TODO: Hier könnte man noch einen Check machen, ob es die Category gibt im MenuService
-            category.setProductCategoryName(dto.getProductCategoryName());
-
-            List<OrderItem> orderItems = new ArrayList<>();
-            for (Long menuId : dto.getProductIds()) {
-                OrderItem orderItem = new OrderItem();
-                // TODO: Rename zu ProductId
-                orderItem.setMenuId(menuId);
-                orderItem.setOrderItemStatus(OrderItem.OrderItemStatus.PROCESSING);
-                orderItems.add(orderItem);
-            }
-
-            category.setOrderItems(orderItems);
-            productCategories.add(category);
-        }
-
-        order.setProducts(productCategories);
-
-        Order createdOrder = orderService.create(order);
+        Order createdOrder = orderService.createOrder(orderDTO);
         return Response.status(Response.Status.CREATED).entity(createdOrder).build();
     }
 

@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 @Entity
 public class OrderItem extends PanacheEntity {
 
-    private Long menuId;
+    private Long productId;
     private OrderItemStatus orderItemStatus;
 
     public enum OrderItemStatus {
@@ -23,12 +23,12 @@ public class OrderItem extends PanacheEntity {
         this.id = id;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
+    public void setProductId(Long menuId) {
+        this.productId = menuId;
     }
 
     public OrderItemStatus getOrderItemstatus() {

@@ -2,10 +2,14 @@ package de.thi.orderservice.service;
 
 import de.thi.orderservice.jpa.entities.Order;
 import de.thi.orderservice.jpa.entities.OrderItem;
+import de.thi.orderservice.jpa.entities.ProductCategory;
 import de.thi.orderservice.jpa.repository.OrderRepository;
+import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +31,38 @@ public class OrderService {
     public Order create(Order order) {
 
         order.setStatus(Order.OrderStatus.PROCESSING);
+        orderRepository.persist(order);
+        return order;
+    }
+
+    @Transactional
+    public Order createOrder(CreateOrderDTO orderDTO) {
+        Order order = new Order();
+        order.setCustomerId(orderDTO.getCustomerId());
+        order.setOrderTimestamp(orderDTO.getOrderTimestamp());
+        order.setProcessorId(null);
+        order.setStatus(Order.OrderStatus.PROCESSING);
+
+        List<ProductCategory> productCategories = new ArrayList<>();
+
+        for (CreateOrderDTO.ProductCategoryDTO dto : orderDTO.getProducts()) {
+            ProductCategory category = new ProductCategory();
+            category.setProductCategoryName(dto.getProductCategoryName());
+
+            List<OrderItem> orderItems = new ArrayList<>();
+            for (Long menuId : dto.getProductIds()) {
+                OrderItem orderItem = new OrderItem();
+                orderItem.setProductId(menuId);
+                orderItem.setOrderItemStatus(OrderItem.OrderItemStatus.PROCESSING);
+                orderItems.add(orderItem);
+            }
+
+            category.setOrderItems(orderItems);
+            productCategories.add(category);
+        }
+
+        order.setProducts(productCategories);
+
         orderRepository.persist(order);
         return order;
     }
