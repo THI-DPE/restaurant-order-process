@@ -75,6 +75,6 @@ public class Order extends PanacheEntity {
     }
 
     public void setStatus(OrderStatus status) {
-        this.status = status;
+        this.orderStatus = status;
     }
 }

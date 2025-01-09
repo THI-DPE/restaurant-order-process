@@ -62,19 +62,4 @@ public class OrderService {
         return null;
     }
 
-
-    @Transactional
-    public Order updateProductStatus(Long id, Long productId, OrderItem.OrderItemStatus status) {
-        Order existingOrder = orderRepository.findById(id);
-        if (existingOrder != null) {
-            existingOrder.getProducts().stream()
-                    .flatMap(productCategory -> productCategory.getOrderItems().stream())
-                    .filter(orderItem -> orderItem.getId().equals(productId))
-                    .findFirst()
-                    .ifPresent(orderItem -> orderItem.setOrderItemStatus(status));
-            orderRepository.persist(existingOrder);
-            return existingOrder;
-        }
-        return null;
-    }
 }
