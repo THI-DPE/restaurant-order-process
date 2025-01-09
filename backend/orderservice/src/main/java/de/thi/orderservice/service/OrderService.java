@@ -28,14 +28,6 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(Order order) {
-
-        order.setStatus(Order.OrderStatus.PROCESSING);
-        orderRepository.persist(order);
-        return order;
-    }
-
-    @Transactional
     public Order createOrder(CreateOrderDTO orderDTO) {
         Order order = new Order();
         order.setCustomerId(orderDTO.getCustomerId());

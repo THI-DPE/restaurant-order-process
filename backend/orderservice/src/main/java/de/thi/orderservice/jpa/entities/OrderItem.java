@@ -27,8 +27,8 @@ public class OrderItem extends PanacheEntity {
         return productId;
     }
 
-    public void setProductId(Long menuId) {
-        this.productId = menuId;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public OrderItemStatus getOrderItemstatus() {

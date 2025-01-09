@@ -2,11 +2,10 @@ package de.thi.orderservice.rest;
 
 import de.thi.orderservice.jpa.entities.Order;
 import de.thi.orderservice.jpa.entities.OrderItem;
+import de.thi.orderservice.rest.dto.OrderItemPriceDTO;
 import de.thi.orderservice.rest.dto.UpdateOrderItemStatusDTO;
 import de.thi.orderservice.rest.dto.UpdateOrderStatusDTO;
 import de.thi.orderservice.service.OrderItemService;
-import de.thi.orderservice.jpa.entities.OrderItem;
-import de.thi.orderservice.jpa.entities.ProductCategory;
 import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import de.thi.orderservice.service.OrderService;
 import jakarta.inject.Inject;
@@ -14,10 +13,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
@@ -86,10 +83,20 @@ public class OrderController {
     }
 
     @PUT
-    @Path("/{id}/productId/{productId}")
-    public Response updateProductStatus(@PathParam("id") Long id, @PathParam("productId") Long productId, UpdateOrderItemStatusDTO statusUpdateDTO) {
+    @Path("/{id}/orderitem/{orderitemid}")
+    public Response updateOrderItemStatus(@PathParam("id") Long id, @PathParam("orderitemid") Long productId, UpdateOrderItemStatusDTO statusUpdateDTO) {
         OrderItem.OrderItemStatus status = OrderItem.OrderItemStatus.valueOf(statusUpdateDTO.getStatus().toUpperCase());
-        Order updatedOrder = orderItemService.updateProductStatus(id, productId, status);
+        Order updatedOrder = orderItemService.updateOrderItemStatus(id, productId, status);
+        if (updatedOrder == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return Response.ok(updatedOrder).build();
+    }
+
+    @GET
+    @Path("/{id}/failedItems")
+    public Response getFailedItems(@PathParam("id") Long id) {
+        List<OrderItemPriceDTO> failedItems = orderItemService.getFailedOrderItems(id);
+        return Response.ok(failedItems).build();
     }
 }
