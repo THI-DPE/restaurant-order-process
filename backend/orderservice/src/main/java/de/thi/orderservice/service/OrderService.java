@@ -25,7 +25,7 @@ public class OrderService {
     @Transactional
     public Order create(Order order) {
 
-        order.setStatus(Order.StatusEnum.PROCESSING);
+        order.setStatus(Order.OrderStatus.PROCESSING);
         orderRepository.persist(order);
         return order;
     }

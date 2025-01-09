@@ -16,20 +16,19 @@ public class Order extends PanacheEntity {
     @Column(nullable = false)
     private LocalDateTime orderTimestamp;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) // CascadeType.ALL: If the ProductCategory entity is removed, all associated OrderItem entities should be removed as well. + Orphan removal: If an OrderItem entity is removed from the ProductCategory entity, it should be removed from the database as well.
+    @OneToMany(cascade = CascadeType.ALL) // CascadeType.ALL: If the ProductCategory entity is removed, all associated OrderItem entities should be removed as well. + Orphan removal: If an OrderItem entity is removed from the ProductCategory entity, it should be removed from the database as well.
     private List<ProductCategory> products;
 
     private Long processorId;
 
     @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    private OrderStatus status;
 
-    public enum StatusEnum {
+    public enum OrderStatus {
         PROCESSING,
         COMPLETED,
         FAILED
     }
-
 
     public long getId() {
         return id;
@@ -71,11 +70,11 @@ public class Order extends PanacheEntity {
         this.processorId = processorId;
     }
 
-    public StatusEnum getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 }

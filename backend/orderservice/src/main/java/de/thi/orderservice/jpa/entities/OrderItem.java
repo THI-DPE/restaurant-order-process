@@ -9,7 +9,6 @@ public class OrderItem extends PanacheEntity {
     private Long menuId;
     private String status;
 
-
     public Long getId() {
         return id;
     }
