@@ -1,6 +1,7 @@
 package de.thi.menuservice.rest;
 
 import de.thi.menuservice.jpa.Category;
+import de.thi.menuservice.service.CategoryService;
 import de.thi.menuservice.service.CategoryServiceImpl;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -14,37 +15,37 @@ import java.util.List;
 @Path("/categories")
 public class CategoryController {
 
-    private CategoryServiceImpl categoryServiceImpl;
+    private final CategoryService categoryService;
 
     @Inject
-    public CategoryController(CategoryServiceImpl categoryServiceImpl) {
-        this.categoryServiceImpl = categoryServiceImpl;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @GET
     public List<Category> getAllCategories() {
-        return categoryServiceImpl.findAll();
+        return categoryService.findAll();
     }
 
     @GET
     @Path("/{id}")
     public Category getCategoryById(@PathParam("id") Long id) {
-        return categoryServiceImpl.findById(id);
+        return categoryService.findById(id);
     }
 
     @POST
     public void createCategory(Category category) {
-        categoryServiceImpl.save(category);
+        categoryService.save(category);
     }
 
     @PUT
     @Path("/{id}")
     public void updateCategoryById(@PathParam("id") Long id, Category category) {
-        Category existingCategory = categoryServiceImpl.findById(id);
+        Category existingCategory = categoryService.findById(id);
         if (existingCategory != null) {
             existingCategory.setName(category.getName());
             existingCategory.setProducts(category.getProducts());
-            categoryServiceImpl.save(existingCategory);
+            categoryService.save(existingCategory);
         }
     }
 }

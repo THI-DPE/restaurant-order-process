@@ -2,6 +2,7 @@ package de.thi.menuservice.service;
 
 import de.thi.menuservice.jpa.Category;
 import de.thi.menuservice.jpa.CategoryRepository;
+import de.thi.menuservice.jpa.Product;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -31,4 +32,9 @@ public class CategoryServiceImpl implements CategoryService {
     public void delete(Long id) {
         categoryRepository.deleteById(id);
     }
+
+    public Product findProductById(Long id) {
+        return categoryRepository.findProductById(id);
+    }
+
 }
