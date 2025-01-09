@@ -3,6 +3,7 @@ package de.thi.orderservice.rest;
 import de.thi.orderservice.jpa.entities.Order;
 import de.thi.orderservice.jpa.entities.OrderItem;
 import de.thi.orderservice.rest.dto.OrderItemPriceDTO;
+import de.thi.orderservice.rest.dto.UpdateOrderDTO;
 import de.thi.orderservice.rest.dto.UpdateOrderItemStatusDTO;
 import de.thi.orderservice.rest.dto.UpdateOrderStatusDTO;
 import de.thi.orderservice.service.OrderItemService;
@@ -50,8 +51,8 @@ public class OrderController {
 
     @PUT
     @Path("/{id}")
-    public Response updateOrder(@PathParam("id") Long id, Order order) {
-        Order updatedOrder = orderService.update(id, order);
+    public Response updateOrder(@PathParam("id") Long id, UpdateOrderDTO order) {
+        Order updatedOrder = orderService.updateOrder(id, order);
         if (updatedOrder != null) {
             return Response.ok(updatedOrder).build();
         } else {

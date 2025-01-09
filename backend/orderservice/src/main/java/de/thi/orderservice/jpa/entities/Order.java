@@ -1,5 +1,6 @@
 package de.thi.orderservice.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 

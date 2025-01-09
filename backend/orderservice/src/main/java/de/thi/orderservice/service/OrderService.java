@@ -5,6 +5,7 @@ import de.thi.orderservice.jpa.entities.OrderItem;
 import de.thi.orderservice.jpa.entities.ProductCategory;
 import de.thi.orderservice.jpa.repository.OrderRepository;
 import de.thi.orderservice.rest.dto.CreateOrderDTO;
+import de.thi.orderservice.rest.dto.UpdateOrderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,29 @@ public class OrderService {
 
     public Optional<Order> findById(Long id) {
         return orderRepository.findByIdOptional(id);
+    }
+
+    public Order updateOrder(Long id, UpdateOrderDTO updateOrderDTO) {
+        Order existingOrder = orderRepository.findById(id);
+
+        if (existingOrder != null) {
+            if (updateOrderDTO.getCustomerId() != null) {
+                existingOrder.setCustomerId(updateOrderDTO.getCustomerId());
+            }
+            if (updateOrderDTO.getOrderTimestamp() != null) {
+                existingOrder.setOrderTimestamp(updateOrderDTO.getOrderTimestamp());
+            }
+            if (updateOrderDTO.getProcessorId() != null) {
+                existingOrder.setProcessorId(updateOrderDTO.getProcessorId());
+            }
+            if (updateOrderDTO.getOrderStatus() != null) {
+                existingOrder.setStatus(updateOrderDTO.getOrderStatus());
+            }
+
+            orderRepository.persist(existingOrder);
+            return existingOrder;
+        }
+        return null;
     }
 
     @Transactional
@@ -61,21 +85,6 @@ public class OrderService {
         return order;
     }
 
-    @Transactional
-    public Order update(Long id, Order order) {
-        Order existingOrder = orderRepository.findById(id);
-        if (existingOrder != null) {
-            existingOrder.setCustomerId(order.getCustomerId());
-            existingOrder.setOrderTimestamp(order.getOrderTimestamp());
-            existingOrder.setProcessorId(order.getProcessorId());
-            existingOrder.setStatus(order.getStatus());
-            existingOrder.setProducts(existingOrder.getProducts());
-
-            orderRepository.persist(existingOrder);
-            return existingOrder;
-        }
-        return null;
-    }
 
     @Transactional
     public boolean delete(Long id) {
