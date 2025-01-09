@@ -50,11 +50,13 @@ public class OrderService {
             category.setProductCategoryName(dto.getProductCategoryName());
 
             List<OrderItem> orderItems = new ArrayList<>();
-            for (Long menuId : dto.getProductIds()) {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setProductId(menuId);
-                orderItem.setOrderItemStatus(OrderItem.OrderItemStatus.PROCESSING);
-                orderItems.add(orderItem);
+            if (dto.getProductIds() != null) {
+                for (Long menuId : dto.getProductIds()) {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setProductId(menuId);
+                    orderItem.setOrderItemStatus(OrderItem.OrderItemStatus.PROCESSING);
+                    orderItems.add(orderItem);
+                }
             }
 
             category.setOrderItems(orderItems);
