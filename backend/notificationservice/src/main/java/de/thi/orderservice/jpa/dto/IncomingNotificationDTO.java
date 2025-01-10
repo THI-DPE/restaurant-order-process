@@ -1,23 +1,36 @@
-package de.thi.orderservice.jpa.entities.dto;
+package de.thi.orderservice.jpa.dto;
 
-import de.thi.orderservice.jpa.entities.Notification;
+import jakarta.persistence.Column;
 
 import java.util.List;
 
 public class IncomingNotificationDTO {
 
-    private Notification.MessageType messageType;
+    @Column(nullable = false)
+    private MessageType messageType;
+
+    public enum MessageType {
+        REIMBURSEMENT,
+        PREPARATION_STARTED,
+        PREPARATION_FINISHED,
+        FAILED_ORDER_ITEMS
+    }
+    @Column(nullable = false)
     private String customerId;
+    @Column(nullable = false)
     private String orderId;
     private List<String> failedItems;
     private String productCategory;
     private double reimbursementAmount;
+    private String title;
+    private String message;
 
-    public Notification.MessageType getMessageType() {
+
+    public MessageType getMessageType() {
         return messageType;
     }
 
-    public void setMessageType(Notification.MessageType messageType) {
+    public void setMessageType(MessageType messageType) {
         this.messageType = messageType;
     }
 
@@ -59,5 +72,21 @@ public class IncomingNotificationDTO {
 
     public void setReimbursementAmount(double reimbursementAmount) {
         this.reimbursementAmount = reimbursementAmount;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

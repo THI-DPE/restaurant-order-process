@@ -137,6 +137,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jsonpath</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-qute</artifactId>
+        </dependency>
 
     </dependencies>
 
