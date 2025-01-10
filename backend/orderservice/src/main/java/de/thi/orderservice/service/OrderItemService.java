@@ -25,6 +25,8 @@ public class OrderItemService {
 
     @RestClient
     MenuService menuService;
+    @Inject
+    OrderRepository orderRepository;
 
     public Optional<OrderItem> findOrderItemById(Long productId) {
         return orderItemRepository.findByIdOptional(productId);
@@ -48,9 +50,8 @@ public class OrderItemService {
         return null;
     }
 
-    @Transactional
     public List<OrderItem> getFailedOrderItemsByOrder(Long orderId) {
-        Order order = Order.findById(orderId);
+        Order order = orderRepository.findById(orderId);
 
         if (order == null) {
             throw new IllegalArgumentException("Order mit der ID " + orderId + " wurde nicht gefunden.");
@@ -59,19 +60,19 @@ public class OrderItemService {
         return order.getProducts().stream()
                 .flatMap(productCategory -> productCategory.getOrderItems().stream())
                 .filter(orderItem -> orderItem.getOrderItemStatus() == OrderItem.OrderItemStatus.FAILED)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
     public List<OrderItemPriceDTO> getFailedOrderItems(Long id) {
         List<OrderItem> failedOrderItems = getFailedOrderItemsByOrder(id);
-        List<OrderItemPriceDTO> failedOrderItemsDTO = new ArrayList<>();
+        List<OrderItemPriceDTO> failedOrderItemsList = new ArrayList<>();
 
         for (OrderItem item : failedOrderItems) {
             Product product = menuService.getProductById(item.getProductId());
-            failedOrderItemsDTO.add(new OrderItemPriceDTO(item.getId(), product.name(), product.price()));
+            failedOrderItemsList.add(new OrderItemPriceDTO(item.getId(), product.name(), product.price()));
         }
 
-        return failedOrderItemsDTO;
+        return failedOrderItemsList;
     }
 }
