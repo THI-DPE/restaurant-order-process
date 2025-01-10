@@ -5,6 +5,7 @@ import de.thi.orderservice.jpa.entities.Order;
 import java.time.LocalDateTime;
 
 public class UpdateOrderDTO {
+
     private Long customerId;
     private Long processorId;
     private Order.OrderStatus orderStatus;
@@ -41,4 +42,5 @@ public class UpdateOrderDTO {
     public void setOrderTimestamp(LocalDateTime orderTimestamp) {
         this.orderTimestamp = orderTimestamp;
     }
+
 }

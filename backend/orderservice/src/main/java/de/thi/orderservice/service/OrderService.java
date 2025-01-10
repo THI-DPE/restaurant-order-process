@@ -82,7 +82,7 @@ public class OrderService {
                 for (Long menuId : dto.getProductIds()) {
                     OrderItem orderItem = new OrderItem();
                     orderItem.setProductId(menuId);
-                    orderItem.setOrderItemStatus(OrderItem.OrderItemStatus.PROCESSING);
+                    orderItem.setStatus(OrderItem.OrderItemStatus.PROCESSING);
                     orderItems.add(orderItem);
                 }
             }
@@ -102,4 +102,18 @@ public class OrderService {
         return orderRepository.deleteById(id);
     }
 
+    public List<OrderItem> getOrderItemsByOrderId(Long id, String status) {
+        Order order = orderRepository.findById(id);
+        List<OrderItem> orderItems = new ArrayList<>();
+        if (order != null) {
+            for (ProductCategory productCategory : order.getProducts()) {
+                for (OrderItem orderItem : productCategory.getOrderItems()) {
+                    if (status == null || orderItem.getStatus().name().equals(status)) {
+                        orderItems.add(orderItem);
+                    }
+                }
+            }
+        }
+        return orderItems;
+    }
 }

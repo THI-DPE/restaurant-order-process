@@ -17,7 +17,6 @@ public class ProductCategory extends PanacheEntityBase {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-
     public String getProductCategoryName() {
         return productCategoryName;
     }
