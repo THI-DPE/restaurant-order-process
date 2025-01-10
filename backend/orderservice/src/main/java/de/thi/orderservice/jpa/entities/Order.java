@@ -30,6 +30,23 @@ public class Order extends PanacheEntity {
         FAILED
     }
 
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
+
+    public enum PaymentType {
+        PAYPAL,
+        BANK
+    }
+
+    private String paymentDetails;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getCustomerId() {
         return customerId;
@@ -69,5 +86,21 @@ public class Order extends PanacheEntity {
 
     public void setStatus(OrderStatus status) {
         this.orderStatus = status;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public String getPaymentDetails() {
+        return paymentDetails;
+    }
+
+    public void setPaymentDetails(String paymentDetails) {
+        this.paymentDetails = paymentDetails;
     }
 }
