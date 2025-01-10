@@ -30,13 +30,6 @@ public class Order extends PanacheEntity {
         FAILED
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public Long getCustomerId() {
         return customerId;
