@@ -12,7 +12,7 @@ public class ProducerRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         // Nachricht aus einem Backend-System lesen und in den Prozess leiten
-        from("activemq:reimbursement:processed")
+        from("activemq:reimbursementProcessed")
                 .log("Message received from Backend: ${body}")
                 .unmarshal().jacksonXml() // Unmarshal from XML
                 .marshal().json(JsonLibrary.Jackson) // Marshal to JSON

@@ -12,7 +12,7 @@ public class BankSimulator extends RouteBuilder {
     public void configure() throws Exception {
         from("file:payment/bank?")
                 .log("File picked up: ${header.CamelFileName}")
-                .to("activemq:reimbursement:processed")
+                .to("activemq:reimbursementProcessed")
                 .log("Message sent to ActiveMQ for processed payment.");
     }
 }

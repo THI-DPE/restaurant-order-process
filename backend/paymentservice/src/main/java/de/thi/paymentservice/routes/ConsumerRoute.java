@@ -14,7 +14,7 @@ public class ConsumerRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        from("activemq:reimbursement:incoming")
+        from("activemq:reimbursementIncoming")
                 .log("Received message: ${body}")
                 .unmarshal().json(JsonLibrary.Jackson, Reimbursement.class) // JSON deserialisieren
                 .process(exchange -> {
