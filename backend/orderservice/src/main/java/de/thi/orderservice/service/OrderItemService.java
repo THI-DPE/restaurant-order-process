@@ -15,7 +15,6 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class OrderItemService {
@@ -25,6 +24,7 @@ public class OrderItemService {
 
     @RestClient
     MenuService menuService;
+
     @Inject
     OrderRepository orderRepository;
 
