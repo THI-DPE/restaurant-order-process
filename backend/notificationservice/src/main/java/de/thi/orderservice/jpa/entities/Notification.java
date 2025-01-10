@@ -3,11 +3,10 @@ package de.thi.orderservice.jpa.entities;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Entity
-public class Notification extends PanacheEntity {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "message_type", discriminatorType = DiscriminatorType.STRING)
+public abstract class Notification extends PanacheEntity {
 
     @Column(nullable = false)
     private String customerId;
@@ -17,17 +16,6 @@ public class Notification extends PanacheEntity {
 
     private String title;
     private String message;
-    private String productCategory;
-
-    @Column(nullable = false)
-    private MessageType messageType;
-
-    public enum MessageType {
-        REIMBURSEMENT,
-        FAILED_ORDER_ITEMS,
-        PREPARATION_STARTED,
-        PREPARATION_FINISHED
-    }
 
     public String getTitle() {
         return title;
@@ -61,19 +49,4 @@ public class Notification extends PanacheEntity {
         this.message = message;
     }
 
-    public String getProductCategory() {
-        return productCategory;
-    }
-
-    public void setProductCategory(String productCategory) {
-        this.productCategory = productCategory;
-    }
-
-    public MessageType getMessageType() {
-        return messageType;
-    }
-
-    public void setMessageType(MessageType messageType) {
-        this.messageType = messageType;
-    }
 }
