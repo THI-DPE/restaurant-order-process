@@ -51,7 +51,7 @@ public class OrderController {
 
     @PUT
     @Path("/{id}")
-    public Response updateOrder(@PathParam("id") Long id, UpdateOrderDTO order) {
+    public Response updateOrder(@PathParam("id") Long id, Order order) {
         Order updatedOrder = orderService.updateOrder(id, order);
         if (updatedOrder != null) {
             return Response.ok(updatedOrder).build();

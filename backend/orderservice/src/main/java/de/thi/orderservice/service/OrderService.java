@@ -4,6 +4,7 @@ import de.thi.orderservice.jpa.entities.Order;
 import de.thi.orderservice.jpa.entities.OrderItem;
 import de.thi.orderservice.jpa.entities.ProductCategory;
 import de.thi.orderservice.jpa.repository.OrderRepository;
+import de.thi.orderservice.jpa.repository.ProductCategoryRepository;
 import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import de.thi.orderservice.rest.dto.UpdateOrderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,6 +21,9 @@ public class OrderService {
     @Inject
     OrderRepository orderRepository;
 
+    @Inject
+    ProductCategoryRepository productCategoryRepository;
+
     public List<Order> findAll() {
         return orderRepository.listAll();
     }
@@ -28,22 +32,30 @@ public class OrderService {
         return orderRepository.findByIdOptional(id);
     }
 
-    public Order updateOrder(Long id, UpdateOrderDTO updateOrderDTO) {
+    @Transactional
+    public Order updateOrder(Long id, Order order) {
         Order existingOrder = orderRepository.findById(id);
 
         if (existingOrder != null) {
-            if (updateOrderDTO.getCustomerId() != null) {
-                existingOrder.setCustomerId(updateOrderDTO.getCustomerId());
+            if (order.getCustomerId() != null) {
+                existingOrder.setCustomerId(order.getCustomerId());
             }
-            if (updateOrderDTO.getOrderTimestamp() != null) {
-                existingOrder.setOrderTimestamp(updateOrderDTO.getOrderTimestamp());
+            if (order.getOrderTimestamp() != null) {
+                existingOrder.setOrderTimestamp(order.getOrderTimestamp());
             }
-            if (updateOrderDTO.getProcessorId() != null) {
-                existingOrder.setProcessorId(updateOrderDTO.getProcessorId());
+            if (order.getProcessorId() != null) {
+                existingOrder.setProcessorId(order.getProcessorId());
             }
-            if (updateOrderDTO.getOrderStatus() != null) {
-                existingOrder.setStatus(updateOrderDTO.getOrderStatus());
+            if (order.getStatus() != null) {
+                existingOrder.setStatus(order.getStatus());
             }
+            if (order.getProducts() != null) {
+                for (ProductCategory productCategory : order.getProducts()) {
+                    productCategoryRepository.persist(productCategory);
+                }
+                existingOrder.setProducts(order.getProducts());
+            }
+
 
             orderRepository.persist(existingOrder);
             return existingOrder;
