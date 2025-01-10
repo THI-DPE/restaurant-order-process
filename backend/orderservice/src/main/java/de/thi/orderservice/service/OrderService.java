@@ -6,10 +6,10 @@ import de.thi.orderservice.jpa.entities.ProductCategory;
 import de.thi.orderservice.jpa.repository.OrderRepository;
 import de.thi.orderservice.jpa.repository.ProductCategoryRepository;
 import de.thi.orderservice.rest.dto.CreateOrderDTO;
-import de.thi.orderservice.rest.dto.UpdateOrderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +49,13 @@ public class OrderService {
             if (order.getStatus() != null) {
                 existingOrder.setStatus(order.getStatus());
             }
-            if (order.getProducts() != null) {
-                for (ProductCategory productCategory : order.getProducts()) {
+                for (ProductCategory productCategory : existingOrder.getProducts()) {
+                    Hibernate.initialize(productCategory.getOrderItems());
                     productCategoryRepository.persist(productCategory);
                 }
-                existingOrder.setProducts(order.getProducts());
-            }
+                //TODO: ggf. noch Items aktualisieren nötig
 
+                //existingOrder.setProducts(existingOrder.getProducts());
 
             orderRepository.persist(existingOrder);
             return existingOrder;
@@ -97,20 +97,9 @@ public class OrderService {
         return order;
     }
 
-
     @Transactional
     public boolean delete(Long id) {
         return orderRepository.deleteById(id);
-    }
-
-    public Order updateOrderStatus(Long id, Order.OrderStatus status) {
-        Order existingOrder = orderRepository.findById(id);
-        if (existingOrder != null) {
-            existingOrder.setStatus(status);
-            orderRepository.persist(existingOrder);
-            return existingOrder;
-        }
-        return null;
     }
 
 }

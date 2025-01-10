@@ -23,9 +23,6 @@ public class OrderItemService {
     @Inject
     OrderItemRepository orderItemRepository;
 
-    @Inject
-    OrderRepository orderRepository;
-
     @RestClient
     MenuService menuService;
 
@@ -33,18 +30,20 @@ public class OrderItemService {
         return orderItemRepository.findByIdOptional(productId);
     }
 
+    @Transactional
+    public OrderItem updateOrderItem(Long id, OrderItem orderItem) {
+        OrderItem existingOrderItem = orderItemRepository.findById(id);
 
-    public Order updateOrderItemStatus(Long id, Long productId, OrderItem.OrderItemStatus status) {
-        Order existingOrder = orderRepository.findById(id);
-        if (existingOrder != null) {
-            Optional<OrderItem> orderItemOptional = findOrderItemById(productId);
-            if (orderItemOptional.isPresent()) {
-                OrderItem orderItem = orderItemOptional.get();
-                orderItem.setOrderItemStatus(status);
-                orderItemRepository.persist(orderItem);
-                orderRepository.persist(existingOrder);
-                return existingOrder;
+        if (existingOrderItem != null) {
+            if (orderItem.getProductId() != null) {
+                existingOrderItem.setProductId(orderItem.getProductId());
             }
+            if (orderItem.getOrderItemStatus() != null) {
+                existingOrderItem.setOrderItemStatus(orderItem.getOrderItemStatus());
+            }
+
+            orderItemRepository.persist(existingOrderItem);
+            return existingOrderItem;
         }
         return null;
     }
@@ -59,7 +58,7 @@ public class OrderItemService {
 
         return order.getProducts().stream()
                 .flatMap(productCategory -> productCategory.getOrderItems().stream())
-                .filter(orderItem -> orderItem.getOrderItemstatus() == OrderItem.OrderItemStatus.FAILED)
+                .filter(orderItem -> orderItem.getOrderItemStatus() == OrderItem.OrderItemStatus.FAILED)
                 .collect(Collectors.toList());
     }
 

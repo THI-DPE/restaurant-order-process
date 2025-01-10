@@ -31,7 +31,7 @@ public class OrderItem extends PanacheEntity {
         this.productId = productId;
     }
 
-    public OrderItemStatus getOrderItemstatus() {
+    public OrderItemStatus getOrderItemStatus() {
         return orderItemStatus;
     }
 
