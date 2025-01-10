@@ -4,7 +4,10 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "orders")
@@ -16,29 +19,32 @@ public class Order extends PanacheEntity {
     @Column(nullable = false)
     private LocalDateTime orderTimestamp;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductCategory> products;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
 
     private Long processorId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    public enum OrderStatus {
-        PROCESSING,
-        COMPLETED,
-        FAILED
-    }
-
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
+
+    private String paymentDetails;
+
+    @ElementCollection
+    private Set<String> categories = new HashSet<>();
 
     public enum PaymentType {
         PAYPAL,
         BANK
     }
 
-    private String paymentDetails;
+    public enum OrderStatus {
+        PROCESSING,
+        COMPLETED,
+        FAILED
+    }
 
     public Long getId() {
         return id;
@@ -64,12 +70,12 @@ public class Order extends PanacheEntity {
         this.orderTimestamp = orderTimestamp;
     }
 
-    public List<ProductCategory> getProducts() {
-        return products;
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
     }
 
-    public void setProducts(List<ProductCategory> products) {
-        this.products = products;
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
     public Long getProcessorId() {
@@ -102,5 +108,23 @@ public class Order extends PanacheEntity {
 
     public void setPaymentDetails(String paymentDetails) {
         this.paymentDetails = paymentDetails;
+    }
+
+    public Set<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<String> categories) {
+        this.categories = categories;
+    }
+
+    public void updateCategories() {
+        if (orderItems != null) {
+            this.categories = orderItems.stream()
+                    .map(OrderItem::getCategory)
+                    .collect(Collectors.toSet());
+        } else {
+            this.categories.clear();
+        }
     }
 }

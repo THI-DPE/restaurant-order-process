@@ -6,6 +6,7 @@ import de.thi.orderservice.service.OrderItemService;
 import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import de.thi.orderservice.service.OrderService;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -70,10 +71,10 @@ public class OrderController {
     }
 
     @GET
-    @Path("/{id}/items")
+    @Path("/{orderId}/items")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOrderItemsByOrderId(@PathParam("id") Long id, @QueryParam("status") String status) {
-        List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(id, status);
+    public Response getOrderItemsByOrderId(@PathParam("orderId") Long id, @QueryParam("category") String category, @QueryParam("status") String status) {
+        List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(id, category, status);
         return Response.ok(orderItems).build();
     }
 

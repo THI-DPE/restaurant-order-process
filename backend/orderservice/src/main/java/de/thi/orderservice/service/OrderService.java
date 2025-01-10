@@ -2,9 +2,7 @@ package de.thi.orderservice.service;
 
 import de.thi.orderservice.jpa.entities.Order;
 import de.thi.orderservice.jpa.entities.OrderItem;
-import de.thi.orderservice.jpa.entities.ProductCategory;
 import de.thi.orderservice.jpa.repository.OrderRepository;
-import de.thi.orderservice.jpa.repository.ProductCategoryRepository;
 import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,9 +18,6 @@ public class OrderService {
 
     @Inject
     OrderRepository orderRepository;
-
-    @Inject
-    ProductCategoryRepository productCategoryRepository;
 
     public List<Order> findAll() {
         return orderRepository.listAll();
@@ -49,13 +44,6 @@ public class OrderService {
             if (order.getStatus() != null) {
                 existingOrder.setStatus(order.getStatus());
             }
-                for (ProductCategory productCategory : existingOrder.getProducts()) {
-                    Hibernate.initialize(productCategory.getOrderItems());
-                    productCategoryRepository.persist(productCategory);
-                }
-                //TODO: ggf. noch Items aktualisieren nötig
-
-                //existingOrder.setProducts(existingOrder.getProducts());
 
             orderRepository.persist(existingOrder);
             return existingOrder;
@@ -71,27 +59,24 @@ public class OrderService {
         order.setProcessorId(null);
         order.setStatus(Order.OrderStatus.PROCESSING);
 
-        List<ProductCategory> productCategories = new ArrayList<>();
+        List<OrderItem> orderItems = new ArrayList<>();
 
         for (CreateOrderDTO.ProductCategoryDTO dto : orderDTO.getProducts()) {
-            ProductCategory category = new ProductCategory();
-            category.setProductCategoryName(dto.getProductCategoryName());
-
-            List<OrderItem> orderItems = new ArrayList<>();
             if (dto.getProductIds() != null) {
-                for (Long menuId : dto.getProductIds()) {
+                for (Long productId : dto.getProductIds()) {
                     OrderItem orderItem = new OrderItem();
-                    orderItem.setProductId(menuId);
+                    orderItem.setProductId(productId);
+                    orderItem.setCategory(dto.getProductCategoryName());
                     orderItem.setStatus(OrderItem.OrderItemStatus.PROCESSING);
+                    orderItem.setOrder(order);
                     orderItems.add(orderItem);
                 }
             }
 
-            category.setOrderItems(orderItems);
-            productCategories.add(category);
         }
 
-        order.setProducts(productCategories);
+        order.setOrderItems(orderItems);
+        order.updateCategories();
 
         orderRepository.persist(order);
         return order;
@@ -102,18 +87,18 @@ public class OrderService {
         return orderRepository.deleteById(id);
     }
 
-    public List<OrderItem> getOrderItemsByOrderId(Long id, String status) {
+    public List<OrderItem> getOrderItemsByOrderId(Long id, String category, String status) {
         Order order = orderRepository.findById(id);
-        List<OrderItem> orderItems = new ArrayList<>();
         if (order != null) {
-            for (ProductCategory productCategory : order.getProducts()) {
-                for (OrderItem orderItem : productCategory.getOrderItems()) {
-                    if (status == null || orderItem.getStatus().name().equals(status)) {
-                        orderItems.add(orderItem);
-                    }
-                }
+            List<OrderItem> orderItems = order.getOrderItems();
+            if (category != null) {
+                orderItems.removeIf(orderItem -> !orderItem.getCategory().equals(category));
             }
+            if (status != null) {
+                orderItems.removeIf(orderItem -> !orderItem.getStatus().equals(OrderItem.OrderItemStatus.valueOf(status)));
+            }
+            return orderItems;
         }
-        return orderItems;
+       return null;
     }
 }
