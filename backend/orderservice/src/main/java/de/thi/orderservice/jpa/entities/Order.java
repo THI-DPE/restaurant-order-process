@@ -16,7 +16,7 @@ public class Order extends PanacheEntity {
     @Column(nullable = false)
     private LocalDateTime orderTimestamp;
 
-
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductCategory> products;
 
     private Long processorId;
