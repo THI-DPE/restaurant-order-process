@@ -17,6 +17,15 @@ public abstract class Notification extends PanacheEntity {
     private String title;
     private String message;
 
+    private MessageType messageType;
+
+    public enum MessageType {
+        REIMBURSEMENT,
+        PREPARATION_STARTED,
+        PREPARATION_FINISHED,
+        FAILED_ORDER_ITEMS
+    }
+
     public String getTitle() {
         return title;
     }
@@ -47,6 +56,14 @@ public abstract class Notification extends PanacheEntity {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
     }
 
 }
