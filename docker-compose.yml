@@ -25,39 +25,93 @@ services:
       - paymentservicedb_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  postgres-menuservice:
+    image: postgres:17
+    container_name: postgres-menuservice
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: menuservicedb
+    ports:
+      - "5434:5432"
+    volumes:
+      - menuservicedb_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
   activemq:
     image: symptoma/activemq:5.18.4
     container_name: activemq
-    #environment:
-      #ARTEMIS_USERNAME: admin
-      #ARTEMIS_PASSWORD: admin
-      #JAVA_TOOL_OPTIONS: "-XX:UseSVE=0" #Fix for ARM64 Bug
     volumes:
       - activemq_data:/var/lib/activemq
     ports:
       - "61616:61616" # ActiveMQ Core protocol
-      - "8161:8161"   # Web Console
-    restart:
-      unless-stopped
+      - "8161:8161" # Web Console
+    restart: unless-stopped
 
+  orderservice:
+    build:
+      context: ./backend/orderservice
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: orderservice
+    container_name: orderservice
+    depends_on:
+      - postgres-orderservice
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/orderservicedb
+      QUARKUS_DATASOURCE_USERNAME: user
+      QUARKUS_DATASOURCE_PASSWORD: password
+      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
 
-  # orderservice:
-  #   build:
-  #     context: ./backend/orderservice
-  #     dockerfile: src/main/docker/Dockerfile.jvm
-  #   image: orderservice
-  #   container_name: orderservice
-  #   depends_on:
-  #     - postgres
-  #   environment:
-  #     QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/orderservicedb
-  #     QUARKUS_DATASOURCE_USERNAME: user
-  #     QUARKUS_DATASOURCE_PASSWORD: password
-  #     JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
-  #   ports:
-  #     - "8080:8080"
-  #   restart: unless-stopped
-  
+  paymentservice:
+    build:
+      context: ./backend/paymentservice
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: paymentservice
+    container_name: paymentservice
+    depends_on:
+      - postgres-paymentservice
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5433/paymentservicedb
+      QUARKUS_DATASOURCE_USERNAME: user
+      QUARKUS_DATASOURCE_PASSWORD: password
+      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+
+  menuservice:
+    build:
+      context: ./backend/menuservice
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: menuservice
+    container_name: menuservice
+    depends_on:
+      - postgres-menuservice
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5434/menuservicedb
+      QUARKUS_DATASOURCE_USERNAME: user
+      QUARKUS_DATASOURCE_PASSWORD: password
+      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
+    ports:
+      - "8082:8080"
+    restart: unless-stopped
+
+  notificationservice:
+    build:
+      context: ./backend/notificationservice
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: notificationservice
+    container_name: notificationservice
+    #volumes:
+    #  - /Users/janniknu/02_Projekte_Uni/DPE/NotificationMount:/notifications
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
+    ports:
+      - "8083:8080"
+    restart: unless-stopped
 
   # spiff
   # spiffworkflow-frontend:
@@ -129,6 +183,7 @@ services:
 volumes:
   orderservicedb_data:
   paymentservicedb_data:
+  menuservicedb_data:
   activemq_data:
   #spiffworkflow_backend_db:
   #  driver: local
