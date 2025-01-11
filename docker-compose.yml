@@ -60,7 +60,6 @@ services:
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres-orderservice:5432/orderservicedb
       QUARKUS_DATASOURCE_USERNAME: user
       QUARKUS_DATASOURCE_PASSWORD: password
-      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -80,7 +79,6 @@ services:
       ACTIVEMQ_URL: tcp://activemq:61616
       ACTIVEMQ_USERNAME: admin
       ACTIVEMQ_PASSWORD: admin
-      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
     ports:
       - "8081:8080"
     restart: unless-stopped
@@ -97,7 +95,6 @@ services:
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres-menuservice:5432/menuservicedb
       QUARKUS_DATASOURCE_USERNAME: user
       QUARKUS_DATASOURCE_PASSWORD: password
-      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
     ports:
       - "8082:8080"
     restart: unless-stopped
@@ -114,7 +111,6 @@ services:
       ACTIVEMQ_URL: tcp://activemq:61616
       ACTIVEMQ_USERNAME: admin
       ACTIVEMQ_PASSWORD: admin
-      JAVA_TOOL_OPTIONS: "-XX:UseSVE=0"
     ports:
       - "8083:8080"
     restart: unless-stopped
