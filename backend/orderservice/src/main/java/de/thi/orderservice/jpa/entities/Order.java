@@ -1,6 +1,7 @@
 package de.thi.orderservice.jpa.entities;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,11 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "orders")
-public class Order extends PanacheEntity {
+public class Order extends PanacheEntityBase {
+
+    @Id
+    @GeneratedValue
+    public Long orderId;
 
     @Column(nullable = false)
     private Long customerId;
@@ -21,8 +26,6 @@ public class Order extends PanacheEntity {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
-
-    private Long processorId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -46,12 +49,12 @@ public class Order extends PanacheEntity {
         FAILED
     }
 
-    public Long getId() {
-        return id;
+    public Long getOrderId() {
+        return orderId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public Long getCustomerId() {
@@ -76,14 +79,6 @@ public class Order extends PanacheEntity {
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
-    }
-
-    public Long getProcessorId() {
-        return processorId;
-    }
-
-    public void setProcessorId(Long processorId) {
-        this.processorId = processorId;
     }
 
     public OrderStatus getStatus() {

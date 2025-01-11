@@ -35,9 +35,6 @@ public class OrderService {
             if(order.getCustomerId() != null) {
                 existingOrder.setCustomerId(order.getCustomerId());
             }
-            if(order.getProcessorId() != null) {
-                existingOrder.setProcessorId(order.getProcessorId());
-            }
             if(order.getOrderTimestamp() != null) {
                 existingOrder.setOrderTimestamp(order.getOrderTimestamp());
             }
@@ -64,7 +61,6 @@ public class OrderService {
         Order order = new Order();
         order.setCustomerId(orderDTO.getCustomerId());
         order.setOrderTimestamp(orderDTO.getOrderTimestamp());
-        order.setProcessorId(null);
         order.setStatus(Order.OrderStatus.PROCESSING);
 
         List<OrderItem> orderItems = new ArrayList<>();
