@@ -32,20 +32,28 @@ public class OrderService {
         Order existingOrder = orderRepository.findById(id);
 
         if (existingOrder != null) {
-            if (order.getCustomerId() != null) {
+            if(order.getCustomerId() != null) {
                 existingOrder.setCustomerId(order.getCustomerId());
             }
-            if (order.getOrderTimestamp() != null) {
-                existingOrder.setOrderTimestamp(order.getOrderTimestamp());
-            }
-            if (order.getProcessorId() != null) {
+            if(order.getProcessorId() != null) {
                 existingOrder.setProcessorId(order.getProcessorId());
             }
-            if (order.getStatus() != null) {
+            if(order.getOrderTimestamp() != null) {
+                existingOrder.setOrderTimestamp(order.getOrderTimestamp());
+            }
+            if(order.getStatus() != null) {
                 existingOrder.setStatus(order.getStatus());
             }
-
-            orderRepository.persist(existingOrder);
+            if(order.getOrderItems() != null) {
+                existingOrder.setOrderItems(order.getOrderItems());
+            }
+            if(order.getPaymentDetails() != null) {
+                existingOrder.setPaymentDetails(order.getPaymentDetails());
+            }
+            if(order.getPaymentType() != null) {
+                existingOrder.setPaymentType(order.getPaymentType());
+            }
+            existingOrder.updateCategories();
             return existingOrder;
         }
         return null;

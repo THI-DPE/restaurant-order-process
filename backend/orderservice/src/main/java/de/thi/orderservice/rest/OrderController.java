@@ -92,8 +92,8 @@ public class OrderController {
     @PUT
     @Path("/{orderId}/items/{orderItemId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateOrderItem(@PathParam("orderItemId") Long orderItemId, OrderItem orderItem) {
-        OrderItem updatedOrderItem = orderItemService.update(orderItemId, orderItem);
+    public Response updateOrderItem(@PathParam("orderItemId") Long orderItemId, @PathParam("orderId") Long orderId, OrderItem orderItem) {
+        OrderItem updatedOrderItem = orderItemService.update(orderId, orderItemId, orderItem);
         if (updatedOrderItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
