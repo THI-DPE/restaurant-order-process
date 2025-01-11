@@ -1,4 +1,4 @@
-package de.thi.orderservice.jpa.dto;
+package de.thi.orderservice.dto;
 
 import jakarta.persistence.Column;
 
