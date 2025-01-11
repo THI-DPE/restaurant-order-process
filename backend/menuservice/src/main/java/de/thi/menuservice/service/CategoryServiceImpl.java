@@ -3,6 +3,7 @@ package de.thi.menuservice.service;
 import de.thi.menuservice.jpa.Category;
 import de.thi.menuservice.jpa.CategoryRepository;
 import de.thi.menuservice.jpa.Product;
+import de.thi.menuservice.jpa.ProductRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -14,6 +15,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Inject
     CategoryRepository categoryRepository;
+
+    @Inject
+    ProductRepository productRepository;
 
     public List<Category> findAll() {
         return categoryRepository.listAll();
@@ -33,8 +37,17 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    public Product findProductById(Long id) {
-        return categoryRepository.findProductById(id);
+    @Transactional
+    public Category addProductToCategory(Long id, Product product) {
+        Category existingCategory = categoryRepository.findById(id);
+        if (existingCategory != null) {
+            product.setCategory(existingCategory);
+            productRepository.persist(product);
+            existingCategory.getProducts().add(product);
+            categoryRepository.persist(existingCategory);
+            return existingCategory;
+        }
+        return null;
     }
 
 }

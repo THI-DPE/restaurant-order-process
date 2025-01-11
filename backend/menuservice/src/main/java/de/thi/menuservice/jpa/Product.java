@@ -1,5 +1,6 @@
 package de.thi.menuservice.jpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -11,6 +12,10 @@ public class Product extends PanacheEntity {
     private String name;
     private String description;
     private double price;
+
+    @ManyToOne
+    @JsonIgnore
+    private Category category;
 
     public String getName() {
         return name;
@@ -36,4 +41,11 @@ public class Product extends PanacheEntity {
         this.price = price;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

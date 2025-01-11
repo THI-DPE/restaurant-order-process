@@ -15,6 +15,5 @@ public interface CategoryService {
 
     void delete(Long id);
 
-    Product findProductById(Long id);
-
+    Category addProductToCategory(Long id, Product product);
 }
