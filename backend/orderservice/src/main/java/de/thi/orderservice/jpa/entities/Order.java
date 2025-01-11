@@ -16,7 +16,7 @@ public class Order extends PanacheEntityBase {
 
     @Id
     @GeneratedValue
-    public Long orderId;
+    private Long orderId;
 
     @Column(nullable = false)
     private Long customerId;
