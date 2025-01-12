@@ -8,6 +8,8 @@ public class CreateOrderDTO {
     private Long customerId;
     private LocalDateTime orderTimestamp;
     private List<ProductCategoryDTO> products;
+    private String paymentType;
+    private String paymentDetails;
 
     public Long getCustomerId() {
         return customerId;
@@ -31,6 +33,22 @@ public class CreateOrderDTO {
 
     public void setProducts(List<ProductCategoryDTO> products) {
         this.products = products;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public String getPaymentDetails() {
+        return paymentDetails;
+    }
+
+    public void setPaymentDetails(String paymentDetails) {
+        this.paymentDetails = paymentDetails;
     }
 
     public static class ProductCategoryDTO {

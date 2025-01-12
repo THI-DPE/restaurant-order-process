@@ -62,6 +62,8 @@ public class OrderService {
         order.setCustomerId(orderDTO.getCustomerId());
         order.setOrderTimestamp(orderDTO.getOrderTimestamp());
         order.setStatus(Order.OrderStatus.PROCESSING);
+        order.setPaymentType(Order.PaymentType.valueOf(orderDTO.getPaymentType()));
+        order.setPaymentDetails(orderDTO.getPaymentDetails());
 
         List<OrderItem> orderItems = new ArrayList<>();
 
