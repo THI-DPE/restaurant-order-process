@@ -79,7 +79,8 @@ services:
       ACTIVEMQ_URL: tcp://activemq:61616
       ACTIVEMQ_USERNAME: admin
       ACTIVEMQ_PASSWORD: admin
-      SPIFF_TARGET_URL: http://localhost:8000/v1.0/messages/payment_service_return_message
+      SPIFF_TARGET_URL: http://localhost:8000/v1.0/messages/payment_service_return_message2
+      SPIFFWORKFLOW_API_KEY: 123456
     ports:
       - "8081:8080"
     restart: unless-stopped
@@ -107,7 +108,7 @@ services:
     image: notificationservice
     container_name: notificationservice
     volumes:
-      - /Users/janniknu/02_Projekte_Uni/DPE/NotificationMount:/deployments/notifications
+      - /Users/marvin/Desktop/Notifications:/deployments/notifications
     environment:
       ACTIVEMQ_URL: tcp://activemq:61616
       ACTIVEMQ_USERNAME: admin

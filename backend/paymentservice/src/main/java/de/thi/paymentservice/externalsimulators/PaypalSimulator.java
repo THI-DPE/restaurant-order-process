@@ -15,4 +15,5 @@ public class PaypalSimulator extends RouteBuilder {
                 .to("activemq:reimbursementProcessed")
                 .log("Message sent to ActiveMQ for processed payment.");
     }
+
 }

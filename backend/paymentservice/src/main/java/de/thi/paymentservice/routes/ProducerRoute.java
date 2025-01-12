@@ -18,6 +18,9 @@ public class ProducerRoute extends RouteBuilder {
     @ConfigProperty(name = "target.url")
     String targetUrl;
 
+    @ConfigProperty(name = "spiffworkflow.api.key")
+    String apiKey;
+
     @Override
     public void configure() throws Exception {
         // Nachricht aus einem Backend-System lesen und in den Prozess leiten
@@ -36,6 +39,7 @@ public class ProducerRoute extends RouteBuilder {
                 .marshal().json(JsonLibrary.Jackson) // Marshal to JSON
                 .log("Converted message to JSON: ${body}")
                 .setHeader("Content-Type", constant("application/json"))
+                .setHeader("Spiffworkflow-Api-Key", constant(apiKey))
                 .toD(targetUrl + "?httpMethod=POST")
                 .log("Message sent to " + targetUrl);
     }
