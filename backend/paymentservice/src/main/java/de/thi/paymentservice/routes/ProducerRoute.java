@@ -40,6 +40,8 @@ public class ProducerRoute extends RouteBuilder {
                 .log("Converted message to JSON: ${body}")
                 .setHeader("Content-Type", constant("application/json"))
                 .setHeader("Spiffworkflow-Api-Key", constant(apiKey))
+                .setHeader("Content-Length", simple("${body.length()}"))
+                .setHeader("Accept", constant("*/*"))
                 .toD(targetUrl + "?httpMethod=POST")
                 .log("Message sent to " + targetUrl);
     }
