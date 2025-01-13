@@ -7,10 +7,10 @@ import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -68,17 +68,17 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (CreateOrderDTO.ProductCategoryDTO dto : orderDTO.getProducts()) {
-            if (dto.getProductIds() != null) {
-                for (Long productId : dto.getProductIds()) {
+            if (dto.getOrderItems() != null) {
+                for (CreateOrderDTO.ProductCategoryDTO.OrderItemDTO itemDTO : dto.getOrderItems()) {
                     OrderItem orderItem = new OrderItem();
-                    orderItem.setProductId(productId);
+                    orderItem.setProductId(itemDTO.getProductId());
                     orderItem.setCategory(dto.getProductCategoryName());
                     orderItem.setStatus(OrderItem.OrderItemStatus.PROCESSING);
                     orderItem.setOrder(order);
+                    orderItem.setRemark(itemDTO.getRemark());
                     orderItems.add(orderItem);
                 }
             }
-
         }
 
         order.setOrderItems(orderItems);

@@ -3,6 +3,7 @@ package de.thi.orderservice.jpa.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 
 import java.util.stream.Collectors;
@@ -12,8 +13,10 @@ public class OrderItem extends PanacheEntity {
 
     private Long productId;
     private OrderItemStatus status;
-
     private String category;
+
+    @Lob
+    private String remark;
 
     @JsonIgnore
     @ManyToOne
@@ -55,6 +58,14 @@ public class OrderItem extends PanacheEntity {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Order getOrder() {

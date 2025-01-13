@@ -53,7 +53,7 @@ public class CreateOrderDTO {
 
     public static class ProductCategoryDTO {
         private String productCategoryName;
-        private List<Long> productIds;
+        private List<OrderItemDTO> orderItems;
 
         public String getProductCategoryName() {
             return productCategoryName;
@@ -63,12 +63,33 @@ public class CreateOrderDTO {
             this.productCategoryName = productCategoryName;
         }
 
-        public List<Long> getProductIds() {
-            return productIds;
+        public List<OrderItemDTO> getOrderItems() {
+            return orderItems;
         }
 
-        public void setProductIds(List<Long> productIds) {
-            this.productIds = productIds;
+        public void setOrderItems(List<OrderItemDTO> orderItems) {
+            this.orderItems = orderItems;
+        }
+
+        public static class OrderItemDTO {
+            private Long productId;
+            private String remark;
+
+            public Long getProductId() {
+                return productId;
+            }
+
+            public void setProductId(Long productId) {
+                this.productId = productId;
+            }
+
+            public String getRemark() {
+                return remark;
+            }
+
+            public void setRemark(String remark) {
+                this.remark = remark;
+            }
         }
     }
 }

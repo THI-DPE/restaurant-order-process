@@ -40,6 +40,9 @@ public class OrderItemService {
             if (orderItem.getStatus() != null) {
                 existingOrderItem.setStatus(orderItem.getStatus());
             }
+            if (orderItem.getRemark() != null) {
+                existingOrderItem.setRemark(orderItem.getRemark());
+            }
 
             orderItemRepository.persist(existingOrderItem);
             return existingOrderItem;
