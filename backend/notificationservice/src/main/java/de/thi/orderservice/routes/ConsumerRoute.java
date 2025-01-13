@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 //ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
 //Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
@@ -89,9 +90,10 @@ public class ConsumerRoute extends RouteBuilder {
                     IncomingNotificationDTO incomingNotification = exchange.getIn().getHeader("notificationDTO", IncomingNotificationDTO.class);
                     String customerId = incomingNotification.getCustomerId();
                     String orderId = incomingNotification.getOrderId();
+                    String uniqueId = UUID.randomUUID().toString();
                     String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
                     exchange.getIn().setHeader("customerId", "Customer_" + customerId);
-                    exchange.getIn().setHeader("CamelFileName", "Order_" + orderId + "_" + timestamp + ".html");
+                    exchange.getIn().setHeader("CamelFileName", "Order_" + orderId + "_"+ incomingNotification.getMessageType()+ "_" + timestamp + "_" + uniqueId + ".html");
                     TemplateInstance templateInstance = notification.data("title", incomingNotification.getTitle())
                             .data("message", incomingNotification.getMessage());
                     String htmlBody = templateInstance.render();
