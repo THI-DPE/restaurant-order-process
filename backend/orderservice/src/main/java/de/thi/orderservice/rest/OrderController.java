@@ -17,12 +17,14 @@ import java.util.Optional;
 @Path("/orders")
 public class OrderController {
 
+    // OrderService und OrderItemService werden injiziert
     @Inject
     OrderService orderService;
 
     @Inject
     OrderItemService orderItemService;
 
+    // POST-Anfrage, um eine Bestellung zu erstellen
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createOrder(CreateOrderDTO createOrderDTO) {
@@ -30,12 +32,14 @@ public class OrderController {
         return Response.status(Response.Status.CREATED).entity(createdOrder).build();
     }
 
+    // GET-Anfrage, um alle Bestellungen abzurufen
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Order> getAllOrders() {
         return orderService.findAll();
     }
 
+    // GET-Anfrage, um eine Bestellung anhand der ID abzurufen
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -47,6 +51,7 @@ public class OrderController {
         return Response.ok(order.get()).build();
     }
 
+    // PUT-Anfrage, um eine Bestellung zu aktualisieren
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -59,6 +64,7 @@ public class OrderController {
         }
     }
 
+    // DELETE-Anfrage, um eine Bestellung zu löschen
     @DELETE
     @Path("/{id}")
     public Response deleteOrder(@PathParam("id") Long id) {
@@ -70,6 +76,7 @@ public class OrderController {
         }
     }
 
+    // GET-Anfrage, um alle Bestellpositionen anhand der Bestellungs-ID abzurufen
     @GET
     @Path("/{orderId}/items")
     @Produces(MediaType.APPLICATION_JSON)
@@ -78,6 +85,7 @@ public class OrderController {
         return Response.ok(orderItems).build();
     }
 
+    // POST-Anfrage, um eine Bestellposition zu erstellen
     @GET
     @Path("/{orderId}/items/{orderItemId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -89,6 +97,7 @@ public class OrderController {
         return Response.ok(orderItem.get()).build();
     }
 
+    // POST-Anfrage, um eine Bestellposition zu erstellen
     @PUT
     @Path("/{orderId}/items/{orderItemId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -100,6 +109,7 @@ public class OrderController {
         return Response.ok(updatedOrderItem).build();
     }
 
+    // POST-Anfrage, um eine Bestellposition zu erstellen
     @DELETE
     @Path("/{orderId}/items/{orderItemId}")
     public Response deleteOrderItem(@PathParam("orderItemId") Long orderItemId) {

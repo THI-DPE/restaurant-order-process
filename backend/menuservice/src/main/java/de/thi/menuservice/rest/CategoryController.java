@@ -18,17 +18,20 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+    // Konstruktor, der CategoryService injiziert
     @Inject
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
+    // GET-Anfrage, um alle Kategorien abzurufen
     @GET
     public Response getAllCategories() {
         List<Category> categories = categoryService.findAll();
         return Response.ok(categories).build();
     }
 
+    // GET-Anfrage, um eine Kategorie nach ID abzurufen
     @GET
     @Path("/{id}")
     public Response getCategoryById(@PathParam("id") Long id) {
@@ -39,12 +42,14 @@ public class CategoryController {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    // POST-Anfrage, um eine Kategorie zu erstellen
     @POST
     public Response createCategory(Category category) {
         categoryService.save(category);
         return Response.ok(category).build();
     }
 
+    // PUT-Anfrage, um eine Kategorie nach ID zu aktualisieren
     @PUT
     @Path("/{id}")
     public Response updateCategoryById(@PathParam("id") Long id, Category category) {
@@ -58,6 +63,7 @@ public class CategoryController {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    // POST-Anfrage, um ein Produkt zu einer Kategorie hinzuzufügen
     @POST
     @Path("/{id}")
     public Response addProductToCategory(@PathParam("id") Long id, Product product) {

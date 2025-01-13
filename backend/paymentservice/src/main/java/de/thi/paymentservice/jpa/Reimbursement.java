@@ -3,6 +3,7 @@ package de.thi.paymentservice.jpa;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
+//PanacheEntity ist eine Klasse, die von Quarkus bereitgestellt wird und die Methoden zum Speichern, Aktualisieren, Löschen und Suchen von Entitäten bereitstellt.
 @Entity
 public class Reimbursement extends PanacheEntityBase {
 

@@ -10,12 +10,16 @@ import jakarta.transaction.Transactional;
 
 import java.util.List;
 
+//ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
+//Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 @ApplicationScoped
 public class CategoryServiceImpl implements CategoryService {
 
+    //Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das CategoryRepository-Objekt wird injiziert.
     @Inject
     CategoryRepository categoryRepository;
 
+    //Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das ProductRepository-Objekt wird injiziert.
     @Inject
     ProductRepository productRepository;
 
@@ -27,6 +31,8 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id);
     }
 
+    // @Transactional-Annotation stellt sicher, dass die Methode innerhalb Datenbank-Transaktion ausgeführt wird.
+    // und Datenbank operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
     @Transactional
     public void save(Category category) {
         categoryRepository.persist(category);
@@ -37,6 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.deleteById(id);
     }
 
+    // fügt ein Produkt zu einer Kategorie hinzu
     @Transactional
     public Category addProductToCategory(Long id, Product product) {
         Category existingCategory = categoryRepository.findById(id);

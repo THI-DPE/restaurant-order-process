@@ -11,16 +11,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Path("/products")
 public class ProductController {
 
     private final ProductService productService;
 
+    // Konstruktor, der ProductService injiziert
     @Inject
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
+    // GET-Anfrage, um alle Produkte abzurufen
     @GET
     @Path("/{id}")
     public Response getProductById(@PathParam("id") Long id) {
@@ -31,6 +34,7 @@ public class ProductController {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    // GET-Anfrage, um alle Produkte abzurufen
     @GET
     @Path("/total")
     public Response getProductDetailsAndTotalPrice(@QueryParam("id") List<Long> productIds) {

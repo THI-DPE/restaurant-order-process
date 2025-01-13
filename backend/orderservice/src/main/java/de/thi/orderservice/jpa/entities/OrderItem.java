@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 
 import java.util.stream.Collectors;
 
+//PanacheEntity ist eine Klasse, die von Quarkus bereitgestellt wird und die Methoden zum Speichern, Aktualisieren, Löschen und Suchen von Entitäten bereitstellt.
 @Entity
 public class OrderItem extends PanacheEntity {
 
@@ -19,6 +20,7 @@ public class OrderItem extends PanacheEntity {
     @Column(columnDefinition = "text")
     private String remark;
 
+    //Ignoriert die Bestellung beim Serialisieren in JSON.
     @JsonIgnore
     @ManyToOne
     private Order order;

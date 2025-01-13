@@ -12,7 +12,7 @@ public class Product extends PanacheEntity {
     private String name;
     private String description;
     private double price;
-
+    //Ignoriert die Kategorie, wenn das Produkt in JSON umgewandelt wird.
     @ManyToOne
     @JsonIgnore
     private Category category;

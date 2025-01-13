@@ -5,6 +5,7 @@ import de.thi.menuservice.jpa.Product;
 
 import java.util.List;
 
+// CategoryService ist ein Interface, das die Methoden zum Speichern, Aktualisieren, Löschen und Suchen von Kategorien bereitstellt.
 public interface CategoryService {
 
     List<Category> findAll();

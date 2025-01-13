@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 
 import java.util.List;
 
+//IncomingNotificationDTO ist eine Klasse, die die eingehenden Benachrichtigungen enthält und die Eigenschaften der Benachrichtigung definiert.
+//data transfer object (DTO) ist ein Entwurfsmuster, das verwendet wird, um eingehende Daten aufzunehmen und passend für den Service zur Verfügung zu stellen.
 public class IncomingNotificationDTO {
 
     @Column(nullable = false)

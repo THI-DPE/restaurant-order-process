@@ -10,11 +10,14 @@ import jakarta.transaction.Transactional;
 
 import java.util.Arrays;
 
+//StartupListener ist eine Klasse, die die Anwendung initialisiert und default Kategorien und Produkte erstellt.
 public class StartupListener {
 
+    //Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das CategoryRepository-Objekt wird injiziert.
     @Inject
     CategoryRepository categoryRepository;
 
+    // @Transactional-Annotation stellt sicher, dass die Methode innerhalb einer Datenbank-Transaktion ausgeführt wird.
     @Transactional
     void onStart(@Observes StartupEvent ev) {
         if (categoryRepository.count() == 0) {
