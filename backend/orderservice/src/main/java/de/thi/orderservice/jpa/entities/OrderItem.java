@@ -2,6 +2,7 @@ package de.thi.orderservice.jpa.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
@@ -15,7 +16,7 @@ public class OrderItem extends PanacheEntity {
     private OrderItemStatus status;
     private String category;
 
-    @Lob
+    @Column(columnDefinition = "text")
     private String remark;
 
     @JsonIgnore

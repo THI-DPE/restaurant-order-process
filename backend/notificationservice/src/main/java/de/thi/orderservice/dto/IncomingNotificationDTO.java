@@ -13,7 +13,9 @@ public class IncomingNotificationDTO {
         REIMBURSEMENT,
         PREPARATION_STARTED,
         PREPARATION_FINISHED,
-        FAILED_ORDER_ITEMS
+        FAILED_ORDER_ITEMS,
+        ORDER_DELAYED,
+        REIMBURSEMENT_DELAYED
     }
     @Column(nullable = false)
     private String customerId;

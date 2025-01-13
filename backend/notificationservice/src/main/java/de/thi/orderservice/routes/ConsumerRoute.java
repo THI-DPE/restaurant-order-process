@@ -37,6 +37,19 @@ public class ConsumerRoute extends RouteBuilder {
                             incomingNotification.setTitle("❗ Wichtige Information zu Ihrer Bestellung!");
                             incomingNotification.setMessage("Folgende Artikel Ihrer Bestellung konnten nicht fertiggestellt werden: " + String.join(", ", failedItems));
                         })
+                    .when().simple("${header.notificationDTO.messageType} == 'ORDER_DELAYED'")
+                        .process(exchange -> {
+                            IncomingNotificationDTO incomingNotification = exchange.getIn().getBody(IncomingNotificationDTO.class);
+                            String productCategoryText = incomingNotification.getProductCategory().equals("drinks") ? "Getränke" : "Gerichte";
+                            incomingNotification.setTitle("⏳ Ihre " + productCategoryText + " verzögern sich!");
+                            incomingNotification.setMessage("Ihre "+ productCategoryText+" wird sich verzögern. Wir bitten um Ihr Verständnis.");
+                        })
+                    .when().simple("${header.notificationDTO.messageType} == 'REIMBURSEMENT_DELAYED'")
+                        .process(exchange -> {
+                            IncomingNotificationDTO incomingNotification = exchange.getIn().getBody(IncomingNotificationDTO.class);
+                            incomingNotification.setTitle("💸 Rückerstattung verzögert!");
+                            incomingNotification.setMessage("Ihre Rückerstattung wird sich verzögern. Wir bitten um Ihr Verständnis.");
+                        })
                     .when().simple("${header.notificationDTO.messageType} == 'PREPARATION_STARTED'")
                         .process(exchange -> {
                             IncomingNotificationDTO incomingNotification = exchange.getIn().getBody(IncomingNotificationDTO.class);
@@ -76,7 +89,7 @@ public class ConsumerRoute extends RouteBuilder {
                 })
                 .log("Processed message")
                 .choice()
-                    .when().simple("${header.notificationDTO.messageType} == 'REIMBURSEMENT'")
+                    .when().simple("${header.notificationDTO.messageType} contains 'REIMBURSEMENT'")
                         .to("file:notifications/emails?fileName=${header.customerId}/${header.CamelFileName}")
                     .otherwise()
                         .to("file:notifications/push?fileName=${header.customerId}/${header.CamelFileName}")

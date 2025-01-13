@@ -76,6 +76,7 @@ public class OrderService {
                     orderItem.setStatus(OrderItem.OrderItemStatus.PROCESSING);
                     orderItem.setOrder(order);
                     orderItem.setRemark(itemDTO.getRemark());
+                    System.out.println("OrderItem: " + orderItem.getRemark());
                     orderItems.add(orderItem);
                 }
             }
