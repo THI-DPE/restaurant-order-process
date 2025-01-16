@@ -3,6 +3,13 @@ package de.thi.orderservice.rest.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ *  CreateOrderDTO ist ein Data Transfer Object (DTO), das die Daten für die Erstellung einer Bestellung enthält.
+ *  @author Alle
+ */
+
+// CreateOrderDTO ist eine Klasse, die die Daten für die Erstellung einer Bestellung enthält. (payed Order)
+// Data transfer object (DTO) ist ein Entwurfsmuster, das verwendet wird, um eingehende Daten aufzunehmen und passend für den Service zur Verfügung zu stellen.
 public class CreateOrderDTO {
 
     private Long customerId;
@@ -51,9 +58,10 @@ public class CreateOrderDTO {
         this.paymentDetails = paymentDetails;
     }
 
+    // ProductCategoryDTO ist eine Klasse, die die Produktkategorie und die Bestellpositionen enthält.
     public static class ProductCategoryDTO {
         private String productCategoryName;
-        private List<Long> productIds;
+        private List<OrderItemDTO> orderItems;
 
         public String getProductCategoryName() {
             return productCategoryName;
@@ -63,12 +71,34 @@ public class CreateOrderDTO {
             this.productCategoryName = productCategoryName;
         }
 
-        public List<Long> getProductIds() {
-            return productIds;
+        public List<OrderItemDTO> getOrderItems() {
+            return orderItems;
         }
 
-        public void setProductIds(List<Long> productIds) {
-            this.productIds = productIds;
+        public void setOrderItems(List<OrderItemDTO> orderItems) {
+            this.orderItems = orderItems;
+        }
+
+        // OrderItemDTO ist eine Klasse, die die Bestellpositionen enthält.
+        public static class OrderItemDTO {
+            private Long productId;
+            private String remark;
+
+            public Long getProductId() {
+                return productId;
+            }
+
+            public void setProductId(Long productId) {
+                this.productId = productId;
+            }
+
+            public String getRemark() {
+                return remark;
+            }
+
+            public void setRemark(String remark) {
+                this.remark = remark;
+            }
         }
     }
 }

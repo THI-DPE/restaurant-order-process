@@ -7,15 +7,22 @@ import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ *  OrderService ist eine Klasse, die die Geschäftslogik für Order verwaltet.
+ *  @author Alle (unterstützt von GitHub Copilot)
+ */
+
+// ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
+// Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 @ApplicationScoped
 public class OrderService {
 
+    // Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderRepository-Objekt wird injiziert.
     @Inject
     OrderRepository orderRepository;
 
@@ -27,6 +34,10 @@ public class OrderService {
         return orderRepository.findByIdOptional(id);
     }
 
+    // @Transactional-Annotation stellt sicher, dass die Methode innerhalb Datenbank-Transaktion ausgeführt wird.
+    // Dadurch werden Datenbank-Operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
+    // Wenn eine Operation fehlschlägt, kann die Transaktion gerollbackt werden, um die Datenintegrität zu gewährleisten.
+    // Die Methode aktualisiert die Bestellung mit allen Attributen
     @Transactional
     public Order updateOrder(Long id, Order order) {
         Order existingOrder = orderRepository.findById(id);
@@ -56,8 +67,12 @@ public class OrderService {
         return null;
     }
 
+    // @Transactional-Annotation stellt sicher, dass die Methode innerhalb Datenbank-Transaktion ausgeführt wird.
+    // und Datenbank operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
+    // Die Methode erstellt eine Bestellung
     @Transactional
     public Order createOrder(CreateOrderDTO orderDTO) {
+        // Order anlegen
         Order order = new Order();
         order.setCustomerId(orderDTO.getCustomerId());
         order.setOrderTimestamp(orderDTO.getOrderTimestamp());
@@ -66,33 +81,39 @@ public class OrderService {
         order.setPaymentDetails(orderDTO.getPaymentDetails());
 
         List<OrderItem> orderItems = new ArrayList<>();
-
+        // Iteriert über die Produkte im DTO und fügt sie der Bestellung hinzu
         for (CreateOrderDTO.ProductCategoryDTO dto : orderDTO.getProducts()) {
-            if (dto.getProductIds() != null) {
-                for (Long productId : dto.getProductIds()) {
+            if (dto.getOrderItems() != null) {
+                // Iteriert über die OrderItems im DTO und fügt sie der Bestellung hinzu
+                for (CreateOrderDTO.ProductCategoryDTO.OrderItemDTO itemDTO : dto.getOrderItems()) {
                     OrderItem orderItem = new OrderItem();
-                    orderItem.setProductId(productId);
+                    orderItem.setProductId(itemDTO.getProductId());
                     orderItem.setCategory(dto.getProductCategoryName());
                     orderItem.setStatus(OrderItem.OrderItemStatus.PROCESSING);
                     orderItem.setOrder(order);
+                    orderItem.setRemark(itemDTO.getRemark());
                     orderItems.add(orderItem);
                 }
             }
-
         }
-
+        // Setzt die OrderItems in der Bestellung
         order.setOrderItems(orderItems);
+        // Kategorien der Order aktualisieren
         order.updateCategories();
 
         orderRepository.persist(order);
         return order;
     }
 
+    // @Transactional-Annotation stellt sicher, dass die Methode innerhalb Datenbank-Transaktion ausgeführt wird.
+    // Dadurch werden Datenbank-Operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
+    // Wenn eine Operation fehlschlägt, kann die Transaktion gerollbackt werden, um die Datenintegrität zu gewährleisten.
     @Transactional
     public boolean delete(Long id) {
         return orderRepository.deleteById(id);
     }
 
+    // Gibt eine Liste von OrderItems zurück, die zu einer Bestellung gehören
     public List<OrderItem> getOrderItemsByOrderId(Long id, String category, String status) {
         Order order = orderRepository.findById(id);
         if (order != null) {
@@ -105,6 +126,6 @@ public class OrderService {
             }
             return orderItems;
         }
-       return null;
+       return new ArrayList<>();
     }
 }

@@ -3,8 +3,12 @@ package de.thi.menuservice.jpa;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
+/**
+ *  Product Entity
+ *  @author Marvin Kern
+ */
 
 @Entity
 public class Product extends PanacheEntity {
@@ -13,7 +17,9 @@ public class Product extends PanacheEntity {
     private String description;
     private double price;
 
+    // ManyToOne bedeutet, dass viele Produkte zu einer Kategorie gehören.
     @ManyToOne
+    // JsonIgnore ignoriert die Kategorie beim Serialisieren in JSON.
     @JsonIgnore
     private Category category;
 

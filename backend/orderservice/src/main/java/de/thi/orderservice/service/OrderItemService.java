@@ -10,12 +10,21 @@ import jakarta.transaction.Transactional;
 
 import java.util.Optional;
 
+/**
+ *  OrderItemService ist eine Klasse, die die Geschäftslogik für OrderItem verwaltet.
+ *  @author Alle (unterstützt von GitHub Copilot)
+ */
+
+// ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
+// Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 @ApplicationScoped
 public class OrderItemService {
 
+    // Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderItemRepository-Objekt wird injiziert.
     @Inject
     OrderItemRepository orderItemRepository;
 
+    // Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderRepository-Objekt wird injiziert.
     @Inject
     OrderRepository orderRepository;
 
@@ -23,6 +32,9 @@ public class OrderItemService {
         return orderItemRepository.findByIdOptional(productId);
     }
 
+    // @Transactional-Annotation stellt sicher, dass die Methode innerhalb Datenbank-Transaktion ausgeführt wird.
+    // und Datenbank operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
+    // Die Methode aktualisiert ProductID, Status und Remark des OrderItems
     @Transactional
     public OrderItem update(Long orderId, Long orderItemId,OrderItem orderItem) {
         Order order = orderRepository.findById(orderId);
@@ -40,6 +52,9 @@ public class OrderItemService {
             if (orderItem.getStatus() != null) {
                 existingOrderItem.setStatus(orderItem.getStatus());
             }
+            if (orderItem.getRemark() != null) {
+                existingOrderItem.setRemark(orderItem.getRemark());
+            }
 
             orderItemRepository.persist(existingOrderItem);
             return existingOrderItem;
@@ -47,6 +62,8 @@ public class OrderItemService {
         return null;
     }
 
+    // @Transactional-Annotation stellt sicher, dass die Methode innerhalb Datenbank-Transaktion ausgeführt wird.
+    // und Datenbank operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
     @Transactional
     public boolean delete(Long orderItemId) {
         return orderItemRepository.deleteById(orderItemId);
