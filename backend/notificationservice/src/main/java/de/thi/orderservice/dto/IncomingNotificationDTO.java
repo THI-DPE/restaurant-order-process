@@ -4,13 +4,20 @@ import jakarta.persistence.Column;
 
 import java.util.List;
 
-//IncomingNotificationDTO ist eine Klasse, die die eingehenden Benachrichtigungen enthält und die Eigenschaften der Benachrichtigung definiert.
-//data transfer object (DTO) ist ein Entwurfsmuster, das verwendet wird, um eingehende Daten aufzunehmen und passend für den Service zur Verfügung zu stellen.
+/**
+ *  IncomingNotificationDTO ist ein Data Transfer Object (DTO), das die eingehenden Benachrichtigungen enthält und die Eigenschaften der Benachrichtigung definiert.
+ *  @author Alle
+ */
+
+// IncomingNotificationDTO ist eine Klasse, die die eingehenden Benachrichtigungen enthält und die Eigenschaften der Benachrichtigung definiert.
+// Data transfer object (DTO) ist ein Entwurfsmuster, das verwendet wird, um eingehende Daten aufzunehmen und passend für den Service zur Verfügung zu stellen.
 public class IncomingNotificationDTO {
 
+    // nullable = false bedeutet, dass die Spalte nicht null sein kann.
     @Column(nullable = false)
     private MessageType messageType;
 
+    // MessageType ist ein Enum, das die verschiedenen Arten von Benachrichtigungen definiert.
     public enum MessageType {
         REIMBURSEMENT,
         PREPARATION_STARTED,
@@ -19,10 +26,13 @@ public class IncomingNotificationDTO {
         ORDER_DELAYED,
         REIMBURSEMENT_DELAYED
     }
+
     @Column(nullable = false)
     private String customerId;
+
     @Column(nullable = false)
     private String orderId;
+
     private List<String> failedItems;
     private String productCategory;
     private double reimbursementAmount;

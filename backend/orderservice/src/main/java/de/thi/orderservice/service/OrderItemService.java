@@ -10,16 +10,21 @@ import jakarta.transaction.Transactional;
 
 import java.util.Optional;
 
-//ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
-//Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
+/**
+ *  OrderItemService ist eine Klasse, die die Geschäftslogik für OrderItem verwaltet.
+ *  @author Alle (unterstützt von GitHub Copilot)
+ */
+
+// ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
+// Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 @ApplicationScoped
 public class OrderItemService {
 
-    //Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderItemRepository-Objekt wird injiziert.
+    // Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderItemRepository-Objekt wird injiziert.
     @Inject
     OrderItemRepository orderItemRepository;
 
-    //Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderRepository-Objekt wird injiziert.
+    // Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderRepository-Objekt wird injiziert.
     @Inject
     OrderRepository orderRepository;
 

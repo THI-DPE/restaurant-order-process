@@ -3,8 +3,13 @@ package de.thi.orderservice.rest.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ *  CreateOrderDTO ist ein Data Transfer Object (DTO), das die Daten für die Erstellung einer Bestellung enthält.
+ *  @author Alle
+ */
+
 // CreateOrderDTO ist eine Klasse, die die Daten für die Erstellung einer Bestellung enthält. (payed Order)
-//data transfer object (DTO) ist ein Entwurfsmuster, das verwendet wird, um eingehende Daten aufzunehmen und passend für den Service zur Verfügung zu stellen.
+// Data transfer object (DTO) ist ein Entwurfsmuster, das verwendet wird, um eingehende Daten aufzunehmen und passend für den Service zur Verfügung zu stellen.
 public class CreateOrderDTO {
 
     private Long customerId;

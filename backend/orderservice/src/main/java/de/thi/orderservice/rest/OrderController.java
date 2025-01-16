@@ -6,13 +6,17 @@ import de.thi.orderservice.service.OrderItemService;
 import de.thi.orderservice.rest.dto.CreateOrderDTO;
 import de.thi.orderservice.service.OrderService;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 import java.util.Optional;
+
+/**
+ *  Die Klasse OrderController stellt die REST-Schnittstelle für die Bestellungen bereit.
+ *  @author Alle (unterstützt von GitHub Copilot)
+ */
 
 @Path("/orders")
 public class OrderController {

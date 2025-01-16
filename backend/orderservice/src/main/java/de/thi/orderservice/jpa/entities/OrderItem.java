@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 
-import java.util.stream.Collectors;
+/**
+ *  OrderItem Entity
+ *  @author Alle
+ */
 
-//PanacheEntity ist eine Klasse, die von Quarkus bereitgestellt wird und die Methoden zum Speichern, Aktualisieren, Löschen und Suchen von Entitäten bereitstellt.
+// PanacheEntity ist eine Klasse, die von Quarkus bereitgestellt wird und die Methoden zum Speichern, Aktualisieren, Löschen und Suchen von Entitäten bereitstellt.
 @Entity
 public class OrderItem extends PanacheEntity {
 
@@ -17,6 +19,8 @@ public class OrderItem extends PanacheEntity {
     private OrderItemStatus status;
     private String category;
 
+    // columnDefinition ist eine Annotation, die von Quarkus bereitgestellt wird und die Spaltendefinition in der Datenbank steuert.
+    // text ist ein Datentyp, der von Quarkus bereitgestellt wird und eine Zeichenfolge mit einer variablen Länge speichert.
     @Column(columnDefinition = "text")
     private String remark;
 

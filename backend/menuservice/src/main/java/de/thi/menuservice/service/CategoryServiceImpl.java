@@ -10,6 +10,11 @@ import jakarta.transaction.Transactional;
 
 import java.util.List;
 
+/**
+ *  CategoryServiceImpl ist eine Klasse, die die Methoden zum Speichern, Aktualisieren, Löschen und Suchen von Kategorien bereitstellt.
+ *  @author Marvin Kern (unterstützt von GitHub Copilot)
+ */
+
 //ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
 //Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 @ApplicationScoped

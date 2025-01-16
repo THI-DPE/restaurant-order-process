@@ -10,15 +10,19 @@ import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-//ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
-//Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
+/**
+ *  OrderService ist eine Klasse, die die Geschäftslogik für Order verwaltet.
+ *  @author Alle (unterstützt von GitHub Copilot)
+ */
+
+// ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
+// Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 @ApplicationScoped
 public class OrderService {
 
-    //Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderRepository-Objekt wird injiziert.
+    // Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das OrderRepository-Objekt wird injiziert.
     @Inject
     OrderRepository orderRepository;
 
@@ -31,7 +35,8 @@ public class OrderService {
     }
 
     // @Transactional-Annotation stellt sicher, dass die Methode innerhalb Datenbank-Transaktion ausgeführt wird.
-    // und Datenbank operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
+    // Dadurch werden Datenbank-Operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
+    // Wenn eine Operation fehlschlägt, kann die Transaktion gerollbackt werden, um die Datenintegrität zu gewährleisten.
     // Die Methode aktualisiert die Bestellung mit allen Attributen
     @Transactional
     public Order updateOrder(Long id, Order order) {
@@ -101,7 +106,8 @@ public class OrderService {
     }
 
     // @Transactional-Annotation stellt sicher, dass die Methode innerhalb Datenbank-Transaktion ausgeführt wird.
-    // und Datenbank operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
+    // Dadurch werden Datenbank-Operationen wie persist, merge, remove, refresh, find, etc. werden innerhalb der Transaktion ausgeführt.
+    // Wenn eine Operation fehlschlägt, kann die Transaktion gerollbackt werden, um die Datenintegrität zu gewährleisten.
     @Transactional
     public boolean delete(Long id) {
         return orderRepository.deleteById(id);

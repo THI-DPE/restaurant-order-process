@@ -10,6 +10,11 @@ import jakarta.transaction.Transactional;
 
 import java.util.Arrays;
 
+/**
+ *  StartupListener ist eine Klasse, die die Anwendung initialisiert und default Kategorien und Produkte erstellt.
+ *  @author Marvin Kern (unterstützt von GitHub Copilot)
+ */
+
 //StartupListener ist eine Klasse, die die Anwendung initialisiert und default Kategorien und Produkte erstellt.
 public class StartupListener {
 

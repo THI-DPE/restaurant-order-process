@@ -15,9 +15,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ *  ConsumerRoute ist eine Camel Route, die eingehende Benachrichtigungen mit Camel verarbeitet und die Benachrichtigungen an die entsprechenden Kanäle weiterleitet (simuliert: mail oder push).
+ *  @author Alle (unterstützt von GitHub Copilot)
+ */
+
 //ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
 //Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 //ConsumerRoute ist eine Klasse, die die eingehenden Benachrichtigungen mit Camel verarbeitet und die Benachrichtigungen an die entsprechenden Kanäle weiterleitet (mail oder push).
+// RouteBuilder ist eine Klasse, die von Camel bereitgestellt wird und die Methoden zum Konfigurieren von Camel-Routen bereitstellt.
 @ApplicationScoped
 public class ConsumerRoute extends RouteBuilder {
 

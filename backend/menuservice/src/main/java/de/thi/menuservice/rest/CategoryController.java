@@ -13,6 +13,12 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
+/**
+ *  Die Klasse CategoryController stellt die REST-Schnittstelle für die Produktkategorien bereit.
+ *  @author Marvin Kern (unterstützt von GitHub Copilot)
+ */
+
+// Die @Path-Annotation wird verwendet, um den Pfad für die REST-Schnittstelle festzulegen.
 @Path("/categories")
 public class CategoryController {
 

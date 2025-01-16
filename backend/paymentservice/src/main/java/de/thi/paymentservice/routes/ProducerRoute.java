@@ -9,10 +9,14 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.time.Instant;
 import java.util.Map;
+
+/**
+ *  Camel Route, die eingehende Nachrichten von der ActiveMQ-Warteschlange "reimbursementProcessed" konsumiert und sie an SpiffWorkflow weiterleitet.
+ *  @author Jannik Nüßlein
+ */
+
 //ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
 //Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
-
-//Produziert Nachrichten von der ActiveMQ-Warteschlange "reimbursement:processed" und leitet sie an den Prozess weiter
 @ApplicationScoped
 public class ProducerRoute extends RouteBuilder {
 

@@ -11,7 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *  Die Klasse ProductController stellt die REST-Schnittstelle für die Produkte bereit.
+ *  @author Marvin Kern (unterstützt von GitHub Copilot)
+ */
 
+// Die @Path-Annotation wird verwendet, um den Pfad für die REST-Schnittstelle festzulegen.
 @Path("/products")
 public class ProductController {
 

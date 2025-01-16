@@ -1,8 +1,12 @@
 package de.thi.paymentservice.externalsimulators;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
+
+/**
+ *  (Bank Simulation) Camel Route, die eingehende Nachrichten von der Datei "payment/bank" konsumiert und sie an die ActiveMQ-Queue "reimbursementProcessed" sendet.
+ *  @author Jannik Nüßlein (unterstützt von GitHub Copilot)
+ */
 
 //Simuliert die Bank, die Zahlungen entgegennimmt und verarbeitet
 //nimmt Dateien aus dem Verzeichnis payment/bank entgegen und sendet sie an die ActiveMQ-Queue reimbursementProcessed

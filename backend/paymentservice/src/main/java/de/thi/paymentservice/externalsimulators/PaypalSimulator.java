@@ -1,8 +1,12 @@
 package de.thi.paymentservice.externalsimulators;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
+
+/**
+ *  (PayPal Simulation) Camel Route, die eingehende Nachrichten von der Datei "payment/paypal" konsumiert und sie an die ActiveMQ-Queue "reimbursementProcessed" sendet.
+ *  @author Jannik Nüßlein (unterstützt von GitHub Copilot)
+ */
 
 //Simuliert Paypal, die Zahlungen entgegennimmt und verarbeitet
 //nimmt Dateien aus dem Verzeichnis payment/paypal entgegen und sendet sie an die ActiveMQ-Queue reimbursementProcessed
