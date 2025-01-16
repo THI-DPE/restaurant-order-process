@@ -14,6 +14,7 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 // ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
 // Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 @ApplicationScoped
+// RouteBuilder ist eine Klasse, die von Camel bereitgestellt wird und die Methoden zum Konfigurieren von Camel-Routen bereitstellt.
 public class ConsumerRoute extends RouteBuilder {
 
     // Override-Methode wird verwendet, um die Methode der Oberklasse zu überschreiben.

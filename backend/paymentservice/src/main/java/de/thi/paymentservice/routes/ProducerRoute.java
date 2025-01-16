@@ -11,13 +11,15 @@ import java.time.Instant;
 import java.util.Map;
 
 /**
- *  Camel Route, die eingehende Nachrichten von der ActiveMQ-Warteschlange "reimbursementProcessed" konsumiert und sie an SpiffWorkflow weiterleitet.
- *  @author Jannik Nüßlein
+ * Camel Route, die eingehende Nachrichten von der ActiveMQ-Warteschlange "reimbursementProcessed" konsumiert und sie an SpiffWorkflow weiterleitet.
+ *
+ * @author Jannik Nüßlein
  */
 
-//ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
-//Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
+// ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
+// Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
 @ApplicationScoped
+// RouteBuilder ist eine Klasse, die von Camel bereitgestellt wird und die Methoden zum Konfigurieren von Camel-Routen bereitstellt.
 public class ProducerRoute extends RouteBuilder {
 
     @ConfigProperty(name = "target.url")
@@ -26,28 +28,26 @@ public class ProducerRoute extends RouteBuilder {
     @ConfigProperty(name = "spiffworkflow.api.key")
     String apiKey;
 
-    //Override-Methode wird verwendet, um die Methode der Oberklasse zu überschreiben.
-    //configure-Methode wird verwendet, um die Camel-Routen zu konfigurieren.
+    // Override-Methode wird verwendet, um die Methode der Oberklasse zu überschreiben.
+    // configure-Methode wird verwendet, um die Camel-Routen zu konfigurieren.
     @Override
     public void configure() throws Exception {
         // Nachricht aus einem Backend-System lesen und in den Prozess leiten
-        //from definiert Herkunft (in unserem Fall die ActiveMQ-Queue "reimbursementProcessed")
+        // from definiert Herkunft (in unserem Fall die ActiveMQ-Queue "reimbursementProcessed")
         from("activemq:reimbursementProcessed")
                 .log("Message received from Backend: ${body}")
                 .unmarshal().jacksonXml()
-                //Setzen von timestamp und status in die Erstattunung
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        Map<String, Object> body = exchange.getIn().getBody(Map.class);
-                        body.put("timestamp", Instant.now().toString());
-                        body.put("status", "REIMBURSEMENT_SUCCESSFUL");
-                        exchange.getIn().setBody(body);
-                    }
+                // Setzen von timestamp und status in die Erstattunung
+                // process-Methode wird verwendet, um die Nachricht zu verarbeiten
+                .process(exchange -> {
+                    Map<String, Object> body = exchange.getIn().getBody(Map.class);
+                    body.put("timestamp", Instant.now().toString());
+                    body.put("status", "REIMBURSEMENT_SUCCESSFUL");
+                    exchange.getIn().setBody(body);
                 })
                 .marshal().json(JsonLibrary.Jackson) // Marshal to JSON
                 .log("Converted message to JSON: ${body}")
-                //Setzen von Headern für Komunikation mit Spiffworkflow
+                // Setzen von Headern für Komunikation mit Spiffworkflow
                 .setHeader("Content-Type", constant("application/json"))
                 .setHeader("Spiffworkflow-Api-Key", constant(apiKey))
                 .setHeader("Content-Length", simple("${body.length()}"))
