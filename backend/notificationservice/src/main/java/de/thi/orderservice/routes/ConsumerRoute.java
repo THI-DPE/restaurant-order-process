@@ -20,31 +20,31 @@ import java.util.UUID;
  *  @author Alle (unterstützt von GitHub Copilot)
  */
 
-//ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
-//Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
-//ConsumerRoute ist eine Klasse, die die eingehenden Benachrichtigungen mit Camel verarbeitet und die Benachrichtigungen an die entsprechenden Kanäle weiterleitet (mail oder push).
+// ApplicationScoped ist eine Annotation, die von Quarkus bereitgestellt wird und die Lebensdauer der Klasse steuert.
+// Eine Klasse, die mit @ApplicationScoped annotiert ist, wird einmal pro Anwendung erstellt und verwaltet.
+// ConsumerRoute ist eine Klasse, die die eingehenden Benachrichtigungen mit Camel verarbeitet und die Benachrichtigungen an die entsprechenden Kanäle weiterleitet (mail oder push).
 // RouteBuilder ist eine Klasse, die von Camel bereitgestellt wird und die Methoden zum Konfigurieren von Camel-Routen bereitstellt.
 @ApplicationScoped
 public class ConsumerRoute extends RouteBuilder {
 
-    //Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das Template-Objekt aus /resources/templates/notification.html wird injiziert.
+    // Die @Inject-Annotation wird verwendet, um die Abhängigkeiten zu injizieren. das Template-Objekt aus /resources/templates/notification.html wird injiziert.
     @Inject
     Template notification;
 
-    //Override-Methode wird verwendet, um die Methode der Oberklasse zu überschreiben.
-    //configure-Methode wird verwendet, um die Camel-Routen zu konfigurieren.
+    // Override-Methode wird verwendet, um die Methode der Oberklasse zu überschreiben.
+    // configure-Methode wird verwendet, um die Camel-Routen zu konfigurieren.
     @Override
     public void configure() throws Exception {
-        //from definiert Herkunft (in unserem Fall die ActiveMQ-Queue "notifications")
+        // from definiert Herkunft (in unserem Fall die ActiveMQ-Queue "notifications")
         from("activemq:notifications")
                 .log("Received message: ${body}")
                 .unmarshal().json(JsonLibrary.Jackson, IncomingNotificationDTO.class)
-                //process unterbricht camel und führt eine beliebige Logik aus
+                // process unterbricht camel und führt eine beliebige Logik aus
                 .process(exchange -> {
                     IncomingNotificationDTO incomingNotification = exchange.getIn().getBody(IncomingNotificationDTO.class);
                     exchange.getIn().setHeader("notificationDTO", incomingNotification);
                 })
-                //Bilden von verschiedenen Benachrichtigungen basierend auf dem Typ der eingehenden Benachrichtigung
+                // Bilden von verschiedenen Benachrichtigungen basierend auf dem Typ der eingehenden Benachrichtigung
                 .choice()
                     .when().simple("${header.notificationDTO.messageType} == 'FAILED_ORDER_ITEMS'")
                         .process(exchange -> {
@@ -91,7 +91,8 @@ public class ConsumerRoute extends RouteBuilder {
                     .otherwise()
                         .log("Unknown message type: ${header.notificationDTO.messageType}")
                 .end()
-                //Erstellen der HTML-Datei mit den Benachrichtigungsinformationen
+                // Erstellen der HTML-Datei mit den Benachrichtigungsinformationen
+                // process-Methode wird verwendet, um die Nachricht zu verarbeiten
                 .process(exchange -> {
                     IncomingNotificationDTO incomingNotification = exchange.getIn().getHeader("notificationDTO", IncomingNotificationDTO.class);
                     String customerId = incomingNotification.getCustomerId();
@@ -106,7 +107,7 @@ public class ConsumerRoute extends RouteBuilder {
                     exchange.getIn().setBody(htmlBody);
                 })
                 .log("Processed message")
-                //Weiterleitung der Benachrichtigung an den entsprechenden Kanal (mail oder push); In unserem Fall wird Email und Push-Notification mit Ordnern simuliert
+                // Weiterleitung der Benachrichtigung an den entsprechenden Kanal (mail oder push); In unserem Fall wird Email und Push-Notification mit Ordnern simuliert
                 .choice()
                     .when().simple("${header.notificationDTO.messageType} contains 'REIMBURSEMENT'")
                         .to("file:notifications/emails?fileName=${header.customerId}/${header.CamelFileName}")
